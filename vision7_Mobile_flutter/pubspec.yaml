@@ -1,0 +1,63 @@
+name: vision7
+description: Vision7 Wellness & Sports Facility App
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^14.0.0
+
+  # State management
+  provider: ^6.1.2
+
+  # Networking
+  dio: ^5.7.0
+  pretty_dio_logger: ^1.4.0
+
+  # Storage
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.3.2
+
+  # i18n
+  flutter_localizations:
+    sdk: flutter
+
+  # Biometrics
+  local_auth: ^2.3.0
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Utilities
+  flutter_dotenv: ^5.1.0
+  share_plus: ^9.0.0
+  url_launcher: ^6.3.0
+
+  # SVG rendering
+  flutter_svg: ^2.0.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  image_path: "assets/images/vision-logo-1024.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
+flutter_gen:
+  output: lib/generated/
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/fonts/

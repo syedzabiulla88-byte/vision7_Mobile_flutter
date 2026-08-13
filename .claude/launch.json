@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Vision7 iOS",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "iPhone"],
+      "port": 8080,
+      "url": "http://localhost:8080"
+    }
+  ]
+}
