@@ -21,42 +21,46 @@ class ConfirmationOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.watch<LanguageProvider>().t;
 
-    return GestureDetector(
-      onTap: onDismiss,
-      child: Container(
-        color: Colors.black54,
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.darkLight,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: const BoxDecoration(
-                    color: AppColors.success,
-                    shape: BoxShape.circle,
+    return Semantics(
+      label: message,
+      liveRegion: true,
+      child: GestureDetector(
+        onTap: onDismiss,
+        child: Container(
+          color: Colors.black54,
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              decoration: BoxDecoration(
+                color: AppColors.darkLight,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: const BoxDecoration(
+                      color: AppColors.success,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check, size: 32, color: AppColors.dark),
                   ),
-                  child: const Icon(Icons.check, size: 32, color: AppColors.dark),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  message,
-                  style: Theme.of(context).textTheme.h3,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                ElevatedButton(
-                  onPressed: onDismiss ?? () => context.pop(),
-                  child: Text(t('common.done', fallback: 'Done')),
-                ),
-              ],
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    message,
+                    style: Theme.of(context).textTheme.h3,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  ElevatedButton(
+                    onPressed: onDismiss ?? () => context.pop(),
+                    child: Text(t('common.done', fallback: 'Done')),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

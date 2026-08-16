@@ -31,10 +31,6 @@ class AcademyHome extends StatelessWidget {
                     width: 220,
                     height: 220,
                     fit: BoxFit.contain,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.gold,
-                      BlendMode.srcIn,
-                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
@@ -42,46 +38,39 @@ class AcademyHome extends StatelessWidget {
                   t('academy.home.title'),
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  t('academy.home.subtitle'),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
                 const SizedBox(height: AppSpacing.xl),
-                Text(
-                  t('academy.home.pillars', fallback: 'Our Pillars'),
-                  style: Theme.of(context).textTheme.h3,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Row(
+                IntrinsicHeight(
+                  child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
                       child: PillarCard(
-                        icon: Icons.school,
                         label: t('academy.pillar.coaching'),
+                        subtitle: t('academy.pillar.coaching.subtitle'),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: PillarCard(
-                        icon: Icons.track_changes,
                         label: t('academy.pillar.development'),
+                        subtitle: t('academy.pillar.development.subtitle'),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: PillarCard(
-                        icon: Icons.emoji_events,
                         label: t('academy.pillar.competition'),
+                        subtitle: t('academy.pillar.competition.subtitle'),
                       ),
                     ),
                   ],
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
-                    color: AppColors.cream.withValues(alpha: 0.1),
+                    color: AppColors.cream.withValues(alpha: 0),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: AppColors.gold.withValues(alpha: 0.35),
@@ -97,8 +86,24 @@ class AcademyHome extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
-                        t('academy.home.aboutText', fallback: 'Vision7 Academy provides world-class football training for youth and amateur players. Our curriculum is designed by certified coaches with international experience.'),
-                        style: Theme.of(context).textTheme.bodySmall,
+                        t('academy.home.aboutText', fallback: '2026/27'),
+                        style: Theme.of(context).textTheme.h2.copyWith(color: AppColors.gold),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => context.push('/enquiry'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.gold,
+                            foregroundColor: AppColors.navy,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: Text(
+                            t('common.enquireNow', fallback: 'Enquire Now'),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -109,39 +114,20 @@ class AcademyHome extends StatelessWidget {
                   style: Theme.of(context).textTheme.h3,
                 ),
                 const SizedBox(height: AppSpacing.md),
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  childAspectRatio: 3,
-                  crossAxisSpacing: AppSpacing.md,
-                  mainAxisSpacing: AppSpacing.md,
+                Column(
                   children: [
-                    QuickLinkItem(
-                      label: t('academy.quickLink.programs'),
-                      route: '/academy/programs',
-                      icon: Icons.sports_soccer,
-                    ),
                     QuickLinkItem(
                       label: t('academy.quickLink.facilities'),
                       route: '/academy/facilities',
                       icon: Icons.stadium,
                     ),
+                    const SizedBox(height: AppSpacing.md),
                     QuickLinkItem(
                       label: t('academy.quickLink.coaches'),
                       route: '/academy/coaches',
                       icon: Icons.person,
                     ),
-                    QuickLinkItem(
-                      label: t('academy.quickLink.events'),
-                      route: '/academy/events',
-                      icon: Icons.event,
-                    ),
-                    QuickLinkItem(
-                      label: t('academy.quickLink.contact'),
-                      route: '/academy/contact',
-                      icon: Icons.contact_mail,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
                     QuickLinkItem(
                       label: t('academy.quickLink.register'),
                       route: '/academy/register',
@@ -160,13 +146,13 @@ class AcademyHome extends StatelessWidget {
 }
 
 class PillarCard extends StatelessWidget {
-  final IconData icon;
   final String label;
+  final String? subtitle;
 
   const PillarCard({
     super.key,
-    required this.icon,
     required this.label,
+    this.subtitle,
   });
 
   @override
@@ -174,7 +160,7 @@ class PillarCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.cream.withValues(alpha: 0.1),
+        color: AppColors.cream.withValues(alpha: 0),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppColors.gold.withValues(alpha: 0.35),
@@ -182,14 +168,31 @@ class PillarCard extends StatelessWidget {
         ),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(icon, size: 28, color: AppColors.gold),
-          const SizedBox(height: AppSpacing.sm),
           Text(
             label,
-            style: Theme.of(context).textTheme.caption,
+            style: Theme.of(context).textTheme.caption.copyWith(
+                  color: AppColors.gold,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 9.5,
+                ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle!,
+              style: Theme.of(context).textTheme.caption.copyWith(
+                    fontSize: 10,
+                    color: AppColors.white,
+                  ),
+              textAlign: TextAlign.left,
+            ),
+          ],
         ],
       ),
     );
@@ -214,8 +217,9 @@ class QuickLinkItem extends StatelessWidget {
       onTap: () => context.push(route),
       borderRadius: BorderRadius.circular(16),
       child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cream.withValues(alpha: 0.1),
+          color: AppColors.cream.withValues(alpha: 0),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: AppColors.gold.withValues(alpha: 0.35),
@@ -237,6 +241,7 @@ class QuickLinkItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: AppSpacing.md),
           ],
         ),
       ),

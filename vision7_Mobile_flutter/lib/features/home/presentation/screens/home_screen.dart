@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/spacing.dart';
+import '../../../../core/theme/custom_text_theme.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/language_provider.dart';
 import '../../../../shared/providers/mode_provider.dart';
 import '../widgets/mode_toggle.dart';
@@ -18,19 +20,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _drawerIndex = 0;
-
-  Widget _bodyForIndex(int index) {
-    switch (index) {
-      case 1:
-        return AcademyHome();
-      case 2:
-        return LeisureHome();
-      default:
-        return AcademyHome();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mode = context.watch<ModeProvider>();
@@ -44,47 +33,36 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (ctx) => IconButton(
             icon: Icon(
               Icons.menu_rounded,
-              color: mode.isAcademy ? AppColors.academyWhite : AppColors.navy,
+              color: mode.isAcademy ? AppColors.gold : AppColors.black,
             ),
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
       ),
-      drawer: _AppDrawer(
-        selectedIndex: _drawerIndex,
-        onSelect: (index) {
-          setState(() => _drawerIndex = index);
-          Navigator.of(context).pop();
-        },
-      ),
-      body: _bodyForIndex(_drawerIndex),
+      drawer: const _AppDrawer(),
+      body: mode.isAcademy ? AcademyHome() : LeisureHome(),
     );
   }
 }
 
 class _AppDrawer extends StatelessWidget {
-  const _AppDrawer({
-    required this.selectedIndex,
-    required this.onSelect,
-  });
-
-  final int selectedIndex;
-  final ValueChanged<int> onSelect;
+  const _AppDrawer();
 
   @override
   Widget build(BuildContext context) {
     final lang = context.watch<LanguageProvider>();
     final mode = context.watch<ModeProvider>();
+    final user = context.watch<AuthProvider>().user;
     final t = lang.t;
     final isAcademy = mode.isAcademy;
     final bg = isAcademy ? AppColors.academyNavy : AppColors.cream;
-    final textPrimary = isAcademy ? AppColors.academyWhite : AppColors.navy;
+    final textPrimary = isAcademy ? AppColors.academyWhite : AppColors.black;
     final textMuted = isAcademy
         ? AppColors.academyWhite.withValues(alpha: 0.55)
         : AppColors.text.withValues(alpha: 0.6);
     final divider = isAcademy
         ? AppColors.academyWhite.withValues(alpha: 0.1)
-        : AppColors.navy.withValues(alpha: 0.08);
+        : AppColors.black.withValues(alpha: 0.08);
 
     return Drawer(
       backgroundColor: bg,
@@ -92,26 +70,33 @@ class _AppDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Brand header
+            // Profile header
             Padding(
               padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xl, AppSpacing.lg, AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  SvgPicture.asset(
-                    'assets/images/vision-logo.svg',
-                    height: 28,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.gold,
-                      BlendMode.srcIn,
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isAcademy ? AppColors.cream.withValues(alpha: 0.1) : AppColors.black.withValues(alpha: 0.06),
+                      border: Border.all(color: AppColors.gold.withValues(alpha: 0.5), width: 1.5),
+                      image: user?.profilePhoto != null
+                          ? DecorationImage(image: NetworkImage(user!.profilePhoto!), fit: BoxFit.cover)
+                          : null,
                     ),
+                    child: user?.profilePhoto == null
+                        ? Icon(Icons.person, size: 26, color: textMuted)
+                        : null,
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    t('app.tagline', fallback: 'Play. Train. Elevate.'),
-                    style: TextStyle(
-                      color: textMuted,
-                      fontSize: 13,
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      user?.name ?? t('profile.guestUser', fallback: 'Guest User'),
+                      style: Theme.of(context).textTheme.h4.copyWith(color: textPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -176,28 +161,25 @@ class _AppDrawer extends StatelessWidget {
 
             // Navigation items
             _DrawerItem(
-              icon: Icons.home_outlined,
-              label: t('home.title', fallback: 'Home'),
-              isActive: selectedIndex == 0 || selectedIndex == 1,
-              onTap: () => onSelect(1),
-              isAcademy: isAcademy,
-              textPrimary: textPrimary,
-              textMuted: textMuted,
-            ),
-            _DrawerItem(
-              icon: Icons.diamond_outlined,
-              label: t('leisure.title', fallback: 'Leisure'),
-              isActive: selectedIndex == 2,
-              onTap: () => onSelect(2),
-              isAcademy: isAcademy,
-              textPrimary: textPrimary,
-              textMuted: textMuted,
-            ),
-            _DrawerItem(
               icon: Icons.calendar_month_outlined,
               label: t('bookings.title', fallback: 'My Bookings'),
               isActive: false,
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/bookings');
+              },
+              isAcademy: isAcademy,
+              textPrimary: textPrimary,
+              textMuted: textMuted,
+            ),
+            _DrawerItem(
+              icon: Icons.notifications_outlined,
+              label: t('profile.notifications', fallback: 'Notifications'),
+              isActive: false,
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/notifications');
+              },
               isAcademy: isAcademy,
               textPrimary: textPrimary,
               textMuted: textMuted,
@@ -206,7 +188,10 @@ class _AppDrawer extends StatelessWidget {
               icon: Icons.person_outline,
               label: t('profile.title', fallback: 'Profile'),
               isActive: false,
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pop();
+                context.push('/profile');
+              },
               isAcademy: isAcademy,
               textPrimary: textPrimary,
               textMuted: textMuted,
@@ -215,7 +200,12 @@ class _AppDrawer extends StatelessWidget {
               icon: Icons.settings_outlined,
               label: t('settings.title', fallback: 'Settings'),
               isActive: false,
-              onTap: () {},
+              onTap: () {
+                // No dedicated Settings screen exists yet — Profile already
+                // hosts Language/Mode toggles, so route there for now.
+                Navigator.of(context).pop();
+                context.push('/profile');
+              },
               isAcademy: isAcademy,
               textPrimary: textPrimary,
               textMuted: textMuted,
@@ -264,7 +254,7 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fill = isActive
-        ? (isAcademy ? AppColors.gold.withValues(alpha: 0.12) : AppColors.navy.withValues(alpha: 0.06))
+        ? (isAcademy ? AppColors.gold.withValues(alpha: 0.12) : AppColors.black.withValues(alpha: 0.06))
         : null;
 
     return InkWell(

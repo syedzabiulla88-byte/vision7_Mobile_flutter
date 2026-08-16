@@ -1,0 +1,7 @@
+# Copy this file to android/key.properties and fill in your real values.
+# DO NOT commit key.properties — it contains secrets.
+
+storeFile=vision7-release.jks
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=vision7
+keyPassword=YOUR_KEY_PASSWORD

@@ -26,27 +26,30 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.watch<LanguageProvider>().t;
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          children: [
-            if (icon != null)
-              Icon(icon, size: 48, color: AppColors.mutedOnDark),
-            const SizedBox(height: AppSpacing.md),
-            Text(title, style: Theme.of(context).textTheme.h4),
-            if (subtitle != null) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Text(subtitle ?? '', style: Theme.of(context).textTheme.bodySmall),
+    return Semantics(
+      label: title,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            children: [
+              if (icon != null)
+                Icon(icon, size: 48, color: AppColors.mutedOnDark),
+              const SizedBox(height: AppSpacing.md),
+              Text(title, style: Theme.of(context).textTheme.h4),
+              if (subtitle != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(subtitle ?? '', style: Theme.of(context).textTheme.bodySmall),
+              ],
+              if (action != null) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ElevatedButton(
+                  onPressed: action,
+                  child: Text(actionLabel ?? t('common.bookNow', fallback: 'Book Now')),
+                ),
+              ],
             ],
-            if (action != null) ...[
-              const SizedBox(height: AppSpacing.lg),
-              ElevatedButton(
-                onPressed: action,
-                child: Text(actionLabel ?? t('common.bookNow', fallback: 'Book Now')),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );

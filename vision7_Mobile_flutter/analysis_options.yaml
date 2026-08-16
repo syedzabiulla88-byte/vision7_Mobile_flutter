@@ -9,6 +9,13 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # Xcode's Swift Package Manager checks the full flutterfire monorepo
+    # (including its own internal test suite) out under here — not part of
+    # this project, but the analyzer would otherwise scan it too.
+    - build/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

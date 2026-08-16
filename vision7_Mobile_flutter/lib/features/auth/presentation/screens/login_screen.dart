@@ -24,17 +24,17 @@ class LoginScreen extends StatelessWidget {
         final mode = context.watch<ModeProvider>();
         final isAcademy = mode.isAcademy;
 
-        final accent = isAcademy ? AppColors.gold : AppColors.navy;
+        final accent = isAcademy ? AppColors.gold : AppColors.black;
         final bgColor = isAcademy ? AppColors.navy : AppColors.cream;
-        final textPrimary = isAcademy ? AppColors.cream : AppColors.navy;
+        final textPrimary = isAcademy ? AppColors.cream : AppColors.black;
         final textMuted =
-            isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.navy.withValues(alpha: 0.55);
+            isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.black.withValues(alpha: 0.55);
         final chipBg = isAcademy
             ? AppColors.cream.withValues(alpha: 0.12)
-            : AppColors.navy.withValues(alpha: 0.08);
+            : AppColors.black.withValues(alpha: 0.08);
         final inputFill = isAcademy
             ? AppColors.cream.withValues(alpha: 0.1)
-            : AppColors.navy.withValues(alpha: 0.07);
+            : AppColors.black.withValues(alpha: 0.05);
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -95,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                           label: 'Leisure',
                           icon: Icons.diamond_rounded,
                           isActive: mode.isLeisure,
-                          activeColor: AppColors.navy,
+                          activeColor: AppColors.black,
                           activeTextColor: AppColors.cream,
                           onTap: () => mode.setMode(AppMode.leisure),
                         ),

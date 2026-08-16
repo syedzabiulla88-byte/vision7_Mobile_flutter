@@ -30,4 +30,15 @@ class NotificationRemoteDataSource {
   Future<void> delete(String id) async {
     await _client.delete('/notifications/$id');
   }
+
+  Future<void> registerDeviceToken(String token, String platform) async {
+    await _client.post('/notifications/device-token', {
+      'token': token,
+      'platform': platform,
+    });
+  }
+
+  Future<void> unregisterDeviceToken(String token) async {
+    await _client.delete('/notifications/device-token/$token');
+  }
 }

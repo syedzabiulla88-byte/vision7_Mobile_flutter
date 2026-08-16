@@ -32,21 +32,24 @@ class AppBadge extends StatelessWidget {
 
     final fontSize = size == AppBadgeSize.sm ? 11.0 : 13.0;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: size == AppBadgeSize.sm ? 8.0 : 12.0,
-        vertical: size == AppBadgeSize.sm ? 4.0 : 6.0,
-      ),
-      decoration: BoxDecoration(
-        color: colors[variant],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: textColors[variant],
-          fontSize: fontSize,
-          fontWeight: FontWeight.w600,
+    return Semantics(
+      label: label,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: size == AppBadgeSize.sm ? 8.0 : 12.0,
+          vertical: size == AppBadgeSize.sm ? 4.0 : 6.0,
+        ),
+        decoration: BoxDecoration(
+          color: colors[variant],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: textColors[variant],
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

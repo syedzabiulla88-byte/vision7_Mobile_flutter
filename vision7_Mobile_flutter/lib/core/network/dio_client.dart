@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const String defaultApiBaseUrl = 'https://api.vision7.sa/api';
 
@@ -12,10 +13,8 @@ class DioClient {
   String? _activeRefresh;
 
   DioClient._internal() {
-    final baseUrl = const String.fromEnvironment(
-      'API_BASE_URL',
-      defaultValue: defaultApiBaseUrl,
-    );
+    final env = dotenv.env;
+    final baseUrl = env['API_BASE_URL'] ?? defaultApiBaseUrl;
 
     dio = Dio(BaseOptions(
       baseUrl: baseUrl,

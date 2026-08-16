@@ -10,6 +10,7 @@ import '../../../../shared/providers/app_mode.dart';
 import '../../../booking/domain/booking.dart';
 import '../../../booking/domain/booking_repository.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/pressable_card.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
@@ -64,13 +65,16 @@ class _BookingsScreenState extends State<BookingsScreen>
 
   Future<void> _cancelBooking(Booking booking) async {
     final t = context.read<LanguageProvider>().t;
+    final isAcademy = context.read<ModeProvider>().isAcademy;
+    final dialogText = isAcademy ? AppColors.cream : AppColors.text;
+    final dialogMuted = isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.white,
+        backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.white,
         title: Text(
           t('booking.cancel.title', fallback: 'Cancel Booking'),
-          style: const TextStyle(color: AppColors.cream),
+          style: TextStyle(color: dialogText),
         ),
         content: Text(
           t(
@@ -78,14 +82,14 @@ class _BookingsScreenState extends State<BookingsScreen>
             fallback:
                 'Are you sure you want to cancel this booking for ${booking.date}?',
           ),
-          style: const TextStyle(color: AppColors.muted),
+          style: TextStyle(color: dialogMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               t('common.no', fallback: 'No'),
-              style: const TextStyle(color: AppColors.muted),
+              style: TextStyle(color: dialogMuted),
             ),
           ),
           TextButton(
@@ -171,11 +175,14 @@ class _BookingsScreenState extends State<BookingsScreen>
                 child: TabBar(
                   controller: _tabController,
                   onTap: (_) => setState(() {}),
+                  dividerColor: Colors.transparent,
                   indicator: BoxDecoration(
-                    color: AppColors.gold,
+                    color: isAcademy ? AppColors.gold : AppColors.black,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  labelColor: AppColors.cream,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  padding: EdgeInsets.zero,
+                  labelColor: isAcademy ? AppColors.black : AppColors.cream,
                   unselectedLabelColor: mutedColor,
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.w700,
@@ -208,8 +215,8 @@ class _BookingsScreenState extends State<BookingsScreen>
 
   Widget _buildBookingList(AppLanguage lang, String Function(String, {String? fallback}) t, bool isAcademy) {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.gold),
+      return Center(
+        child: CircularProgressIndicator(color: isAcademy ? AppColors.gold : AppColors.black),
       );
     }
 
@@ -290,10 +297,12 @@ class _BookingCard extends StatelessWidget {
     final textColor = isAcademy ? AppColors.text : AppColors.text;
     final mutedColor = isAcademy ? AppColors.muted : AppColors.muted;
 
-    return InkWell(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: PressableCard(
+      isAcademy: isAcademy,
       onTap: () => context.push('/bookings/${booking.id}'),
       child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.md),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: cardColor,
@@ -359,8 +368,8 @@ class _BookingCard extends StatelessWidget {
                 ),
                 Text(
                   booking.formattedTotal,
-                  style: const TextStyle(
-                    color: AppColors.gold,
+                  style: TextStyle(
+                    color: isAcademy ? AppColors.gold : AppColors.black,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                   ),
@@ -387,6 +396,7 @@ class _BookingCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import '../domain/auth_result.dart';
 import '../domain/user.dart';
 
 abstract class AuthRepository {
+  Future<void> acceptConsent(String type, String version);
   Future<AuthResult> login(String email, String password);
   Future<AuthResult> register({
     required String name,

@@ -94,14 +94,17 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     final userMembershipRepo = context.read<UserMembershipRepository>();
     final scaffold = ScaffoldMessenger.of(context);
     final router = GoRouter.of(context);
+    final isAcademy = context.read<ModeProvider>().isAcademy;
+    final dialogText = isAcademy ? AppColors.cream : AppColors.text;
+    final dialogMuted = isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.white,
+        backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.white,
         title: Text(
           t('payment.confirmTitle', fallback: 'Confirm Purchase'),
-          style: const TextStyle(color: AppColors.cream),
+          style: TextStyle(color: dialogText),
         ),
         content: Text(
           t(
@@ -109,18 +112,18 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             fallback:
                 'Purchase $planName for ${plan.currency} ${plan.price.toStringAsFixed(2)}?',
           ),
-          style: const TextStyle(color: AppColors.muted),
+          style: TextStyle(color: dialogMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(t('common.cancel', fallback: 'Cancel'),
-                style: const TextStyle(color: AppColors.muted)),
+                style: TextStyle(color: dialogMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(t('common.confirm', fallback: 'Confirm'),
-                style: const TextStyle(color: AppColors.gold)),
+                style: TextStyle(color: isAcademy ? AppColors.gold : AppColors.black)),
           ),
         ],
       ),
@@ -176,7 +179,8 @@ class _MethodTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardBg = isAcademy ? AppColors.cream.withValues(alpha: 0.1) : AppColors.white;
-    final textColor = isSelected ? AppColors.gold : (isAcademy ? AppColors.cream : AppColors.muted);
+    final accent = isAcademy ? AppColors.gold : AppColors.black;
+    final textColor = isSelected ? accent : (isAcademy ? AppColors.cream : AppColors.muted);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -184,10 +188,10 @@ class _MethodTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.gold.withValues(alpha: 0.08) : cardBg,
+          color: isSelected ? accent.withValues(alpha: 0.08) : cardBg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.gold : (isAcademy ? AppColors.gold.withValues(alpha: 0.3) : AppColors.grayBorder),
+            color: isSelected ? accent : (isAcademy ? AppColors.gold.withValues(alpha: 0.3) : AppColors.grayBorder),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -196,21 +200,21 @@ class _MethodTile extends StatelessWidget {
             Icon(
               method.icon,
               size: 28,
-              color: isSelected ? AppColors.gold : (isAcademy ? AppColors.cream : AppColors.muted),
+              color: isSelected ? accent : (isAcademy ? AppColors.cream : AppColors.muted),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Text(
                 method.label,
                 style: TextStyle(
-                  color: isSelected ? AppColors.gold : textColor,
+                  color: textColor,
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: AppColors.gold, size: 24),
+              Icon(Icons.check_circle, color: accent, size: 24),
           ],
         ),
       ),

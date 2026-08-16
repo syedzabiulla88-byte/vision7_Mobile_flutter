@@ -17,4 +17,11 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   @override
   Future<void> delete(String id) => _remote.delete(id);
+
+  @override
+  Future<void> registerDeviceToken(String token, String platform) =>
+      _remote.registerDeviceToken(token, platform);
+
+  @override
+  Future<void> unregisterDeviceToken(String token) => _remote.unregisterDeviceToken(token);
 }

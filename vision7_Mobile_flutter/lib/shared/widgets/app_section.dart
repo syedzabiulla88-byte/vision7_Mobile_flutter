@@ -20,7 +20,9 @@ class AppSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Semantics(
+      header: true,
+      child: Padding(
       padding: noPadding ? EdgeInsets.zero : const EdgeInsets.only(bottom: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,6 +48,7 @@ class AppSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           ...children,
         ],
+      ),
       ),
     );
   }

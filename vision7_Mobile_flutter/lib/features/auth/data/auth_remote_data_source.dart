@@ -7,6 +7,10 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this._client);
 
+  Future<void> acceptConsent(String type, String version) async {
+    await _client.post('/me/consent', {'type': type, 'version': version});
+  }
+
   Future<AuthResult> login(String email, String password) async {
     final result = await _client.post<AuthResult>(
       '/auth/login',

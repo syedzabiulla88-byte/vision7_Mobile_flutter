@@ -17,6 +17,10 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remote, this._secureStorage, this._prefs);
 
   @override
+  Future<void> acceptConsent(String type, String version) =>
+      _remote.acceptConsent(type, version);
+
+  @override
   Future<AuthResult> login(String email, String password) =>
       _remote.login(email, password);
 

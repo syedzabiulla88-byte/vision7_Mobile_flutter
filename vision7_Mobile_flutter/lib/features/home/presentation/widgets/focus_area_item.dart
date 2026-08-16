@@ -17,10 +17,11 @@ class FocusAreaItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = isAcademy ? AppColors.gold : AppColors.black;
     final cardFill = isAcademy
         ? AppColors.cream.withValues(alpha: 0.1)
-        : AppColors.navy.withValues(alpha: 0.07);
-    final textColor = isAcademy ? AppColors.cream : AppColors.navy;
+        : AppColors.black.withValues(alpha: 0.05);
+    final textColor = isAcademy ? AppColors.cream : AppColors.black;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -28,13 +29,13 @@ class FocusAreaItem extends StatelessWidget {
         color: cardFill,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.gold.withValues(alpha: 0.35),
+          color: accent.withValues(alpha: 0.35),
           width: 1,
         ),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 24, color: AppColors.gold),
+          Icon(icon, size: 24, color: accent),
           const SizedBox(height: AppSpacing.sm),
           Text(
             label,

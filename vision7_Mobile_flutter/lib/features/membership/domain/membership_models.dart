@@ -59,6 +59,22 @@ class MembershipPlan {
   }
 }
 
+class FamilyMember {
+  final String id;
+  final String name;
+  final String? relation;
+
+  FamilyMember({required this.id, required this.name, this.relation});
+
+  factory FamilyMember.fromJson(Map<String, dynamic> json) {
+    return FamilyMember(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      relation: json['relation'] as String?,
+    );
+  }
+}
+
 class UserMembership {
   final String id;
   final String userId;
@@ -72,6 +88,7 @@ class UserMembership {
   final int sessionsTotal;
   final bool isFrozen;
   final String? frozenUntil;
+  final List<FamilyMember> familyMembers;
 
   UserMembership({
     required this.id,
@@ -86,10 +103,12 @@ class UserMembership {
     required this.sessionsTotal,
     required this.isFrozen,
     this.frozenUntil,
+    this.familyMembers = const [],
   });
 
   factory UserMembership.fromJson(Map<String, dynamic> json) {
     final plan = json['plan'] as Map<String, dynamic>?;
+    final familyJson = json['familyMembers'] as List<dynamic>? ?? json['family_members'] as List<dynamic>?;
     return UserMembership(
       id: json['id'] as String,
       userId: json['userId'] as String? ?? json['user_id'] as String? ?? '',
@@ -108,6 +127,7 @@ class UserMembership {
       isFrozen: json['isFrozen'] as bool? ?? json['is_frozen'] as bool? ?? false,
       frozenUntil: json['frozenUntil'] as String? ??
           json['frozen_until'] as String?,
+      familyMembers: familyJson?.map((m) => FamilyMember.fromJson(m as Map<String, dynamic>)).toList() ?? const [],
     );
   }
 }

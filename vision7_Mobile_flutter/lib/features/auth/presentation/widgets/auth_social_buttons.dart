@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/spacing.dart';
 import '../../../../shared/providers/language_provider.dart';
@@ -17,81 +20,62 @@ class AuthSocialButtons extends StatelessWidget {
   final Color? accent;
   final Color? textPrimary;
 
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+
   Future<void> _handleGoogle(BuildContext context) async {
     final auth = context.read<AuthProvider>();
-    // For demo: prompt for a token-like input.
-    // In production, integrate google_sign_in package.
-    final t = context.read<LanguageProvider>().t;
     if (!context.mounted) return;
 
-    final idToken = await showDialog<String>(
-      context: context,
-      builder: (ctx) {
-        final controller = TextEditingController();
-        return AlertDialog(
-          backgroundColor: AppColors.white,
-          title: Text(t('auth.googleSignIn', fallback: 'Google Sign-In')),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: t('common.idToken', fallback: 'ID Token'),
-              hintStyle: const TextStyle(color: AppColors.muted),
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(t('common.cancel', fallback: 'Cancel'))),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(controller.text),
-              child: Text(t('auth.signIn', fallback: 'Sign In')),
-            ),
-          ],
-        );
-      },
-    );
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null || !context.mounted) return;
 
-    if (idToken != null && idToken.isNotEmpty && context.mounted) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final String? idToken = googleAuth.idToken;
+      if (idToken == null || !context.mounted) return;
+
       final success = await auth.googleLogin(idToken);
       if (success && context.mounted) {
         context.go('/home');
       }
+    } on Exception catch (e) {
+      debugPrint('Google sign-in error: $e');
     }
   }
 
   Future<void> _handleApple(BuildContext context) async {
     final auth = context.read<AuthProvider>();
-    final t = context.read<LanguageProvider>().t;
     if (!context.mounted) return;
 
-    final idToken = await showDialog<String>(
-      context: context,
-      builder: (ctx) {
-        final controller = TextEditingController();
-        return AlertDialog(
-          backgroundColor: AppColors.white,
-          title: Text(t('auth.appleSignIn', fallback: 'Apple Sign-In')),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: t('common.idToken', fallback: 'ID Token'),
-              hintStyle: const TextStyle(color: AppColors.muted),
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(t('common.cancel', fallback: 'Cancel'))),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(controller.text),
-              child: Text(t('auth.signIn', fallback: 'Sign In')),
-            ),
-          ],
-        );
-      },
-    );
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
 
-    if (idToken != null && idToken.isNotEmpty && context.mounted) {
-      final success = await auth.appleLogin(idToken);
+      if (!context.mounted) return;
+
+      final Map<String, dynamic> userPayload = <String, dynamic>{
+        if (credential.givenName != null && credential.familyName != null)
+          'name': '${credential.givenName} ${credential.familyName}'
+        else if (credential.givenName != null)
+          'name': credential.givenName,
+        if (credential.email != null) 'email': credential.email,
+      };
+
+      final success = await auth.appleLogin(
+        credential.identityToken!,
+        user: userPayload.isEmpty ? null : userPayload,
+      );
       if (success && context.mounted) {
         context.go('/home');
       }
+    } on Exception catch (e) {
+      debugPrint('Apple sign-in error: $e');
     }
   }
 

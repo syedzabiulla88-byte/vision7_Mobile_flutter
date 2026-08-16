@@ -10,11 +10,16 @@ class ModeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mode = context.watch<ModeProvider>();
+    final isAcademy = mode.isAcademy;
 
     final activeBg = AppColors.gold;
     final activeText = AppColors.academyNavy;
-    final inactiveBg = AppColors.academyWhite.withValues(alpha: 0.08);
-    final inactiveText = AppColors.academyWhite.withValues(alpha: 0.6);
+    final inactiveBg = isAcademy
+        ? AppColors.academyWhite.withValues(alpha: 0.08)
+        : AppColors.black.withValues(alpha: 0.06);
+    final inactiveText = isAcademy
+        ? AppColors.academyWhite.withValues(alpha: 0.6)
+        : AppColors.black.withValues(alpha: 0.6);
 
     return Container(
       padding: const EdgeInsets.all(4),
@@ -25,25 +30,33 @@ class ModeToggle extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _ModeButton(
-              label: 'Academy',
-              icon: Icons.school_rounded,
-              isActive: mode.isAcademy,
-              activeBg: activeBg,
-              activeText: activeText,
-              inactiveText: inactiveText,
-              onTap: () => mode.setMode(AppMode.academy),
+            child: Semantics(
+              button: true,
+              selected: mode.isAcademy,
+              child: _ModeButton(
+                label: 'Academy',
+                icon: Icons.school_rounded,
+                isActive: mode.isAcademy,
+                activeBg: activeBg,
+                activeText: activeText,
+                inactiveText: inactiveText,
+                onTap: () => mode.setMode(AppMode.academy),
+              ),
             ),
           ),
           Expanded(
-            child: _ModeButton(
-              label: 'Leisure',
-              icon: Icons.diamond_rounded,
-              isActive: mode.isLeisure,
-              activeBg: AppColors.navy,
-              activeText: AppColors.cream,
-              inactiveText: inactiveText,
-              onTap: () => mode.setMode(AppMode.leisure),
+            child: Semantics(
+              button: true,
+              selected: mode.isLeisure,
+              child: _ModeButton(
+                label: 'Leisure',
+                icon: Icons.diamond_rounded,
+                isActive: mode.isLeisure,
+                activeBg: AppColors.black,
+                activeText: AppColors.cream,
+                inactiveText: inactiveText,
+                onTap: () => mode.setMode(AppMode.leisure),
+              ),
             ),
           ),
         ],

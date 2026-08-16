@@ -244,7 +244,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: t('booking.notes', fallback: 'Special requests...'),
-                        hintStyle: TextStyle(color: AppColors.muted),
+                        hintStyle: TextStyle(
+                          color: isAcademy ? AppColors.cream.withValues(alpha: 0.5) : AppColors.muted,
+                        ),
                         filled: true,
                         fillColor: cardBg,
                         border: OutlineInputBorder(
@@ -268,7 +270,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 AppSpacing.lg,
                 AppSpacing.lg + MediaQuery.of(context).padding.bottom,
               ),
-              color: isAcademy ? AppColors.academyNavy : AppColors.text,
+              color: isAcademy ? AppColors.academyNavy : AppColors.white,
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

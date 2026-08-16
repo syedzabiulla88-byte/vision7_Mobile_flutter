@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,8 @@ import '../features/enquiry/domain/enquiry_repository.dart';
 import '../features/tour_booking/data/tour_repository_impl.dart';
 import '../features/tour_booking/data/tour_remote_data_source.dart';
 import '../features/tour_booking/domain/tour_repository.dart';
+import '../features/notifications/presentation/providers/notifications_provider.dart';
+import '../shared/services/push_notification_service.dart';
 import '../shared/providers/auth_provider.dart';
 import '../features/auth/data/auth_repository_impl.dart';
 import '../features/auth/domain/auth_repository.dart';
@@ -101,6 +104,7 @@ class _ProviderScopeState extends State<ProviderScope> {
         final tourRepository = TourRepositoryImpl(
           TourRemoteDataSource(dioClient),
         );
+        final pushNotificationService = PushNotificationService(notificationRepository);
 
         return MultiProvider(
           providers: [
@@ -120,9 +124,13 @@ class _ProviderScopeState extends State<ProviderScope> {
             Provider<TourRepository>.value(value: tourRepository),
             ChangeNotifierProvider(create: (_) => LanguageProvider(prefs)),
             ChangeNotifierProvider(create: (_) => ModeProvider(prefs)),
+            ChangeNotifierProvider(
+              create: (_) => NotificationsProvider(notificationRepository),
+            ),
+            Provider<PushNotificationService>.value(value: pushNotificationService),
             ChangeNotifierProvider<AuthProvider>(
               create: (_) {
-                final authProvider = AuthProvider(authRepository);
+                final authProvider = AuthProvider(authRepository, pushNotificationService);
                 updateRouterRefreshNotifier(authProvider);
                 return authProvider;
               },
@@ -138,18 +146,21 @@ class _ProviderScopeState extends State<ProviderScope> {
 class _SplashLoader extends StatelessWidget {
   const _SplashLoader();
 
+  // Matches SplashScreen's first frame (navy + gold Vision7 shield) so there's
+  // no visual seam between this pre-SharedPreferences loader and the real,
+  // animated splash that follows it.
   @override
   Widget build(BuildContext context) {
-    return const Directionality(
+    return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
-        backgroundColor: AppColors.cream,
+        backgroundColor: AppColors.academyNavy,
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlutterLogo(size: 80),
-            ],
+          child: SvgPicture.asset(
+            'assets/images/vision-logo.svg',
+            width: 200,
+            height: 200,
+            fit: BoxFit.contain,
           ),
         ),
       ),

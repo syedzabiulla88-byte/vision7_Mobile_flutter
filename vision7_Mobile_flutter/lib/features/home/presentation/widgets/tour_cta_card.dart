@@ -16,11 +16,7 @@ class TourCtaCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.gold, AppColors.goldDark],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.black,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -32,14 +28,14 @@ class TourCtaCard extends StatelessWidget {
                 Text(
                   t('home.bookATour', fallback: 'Book a Tour'),
                   style: Theme.of(context).textTheme.h3.copyWith(
-                    color: AppColors.text,
+                    color: AppColors.cream,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   t('home.tourSubtitle', fallback: 'See our facilities in person'),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.text.withAlpha((0.7 * 255).round()),
+                    color: AppColors.cream.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -49,7 +45,7 @@ class TourCtaCard extends StatelessWidget {
             onPressed: () => context.push('/tour-booking'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.cream,
-              foregroundColor: AppColors.gold,
+              foregroundColor: AppColors.black,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
             child: Text(t('common.bookNow', fallback: 'Book Now')),

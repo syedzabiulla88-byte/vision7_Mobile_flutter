@@ -22,42 +22,49 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: padding ?? const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (imageUrl != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    height: 120,
-                    color: AppColors.surfaceElevated,
-                    child: const Center(
-                      child: Icon(Icons.image_outlined, color: AppColors.muted),
+    return Semantics(
+      button: onTap != null,
+      label: title,
+      child: Tooltip(
+        message: title ?? '',
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: padding ?? const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (imageUrl != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: 120,
+                        color: AppColors.surfaceElevated,
+                        child: const Center(
+                          child: Icon(Icons.image_outlined, color: AppColors.muted),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              if (title != null) ...[
-                const SizedBox(height: 12),
-                Text(title!, style: Theme.of(context).textTheme.h4),
-              ],
-              if (subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
-              ],
-              if (child != null) ...[
-                const SizedBox(height: 12),
-                child!,
-              ],
-            ],
+                  if (title != null) ...[
+                    const SizedBox(height: 12),
+                    Text(title!, style: Theme.of(context).textTheme.h4),
+                  ],
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                  if (child != null) ...[
+                    const SizedBox(height: 12),
+                    child!,
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

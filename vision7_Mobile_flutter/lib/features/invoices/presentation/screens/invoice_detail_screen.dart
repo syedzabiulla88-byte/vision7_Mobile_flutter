@@ -6,6 +6,7 @@ import '../../../../core/theme/custom_text_theme.dart';
 import '../../../../shared/providers/language_provider.dart';
 import '../../../../shared/providers/mode_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/pressable_card.dart';
 
 class InvoiceDetailScreen extends StatelessWidget {
   final String id;
@@ -84,8 +85,10 @@ class InvoiceDetailScreen extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
         itemBuilder: (context, index) {
           final inv = invoices[index];
-          return InkWell(
+          return PressableCard(
+            isAcademy: isAcademy,
             onTap: () => context.push('/membership/${inv['id']}'),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(

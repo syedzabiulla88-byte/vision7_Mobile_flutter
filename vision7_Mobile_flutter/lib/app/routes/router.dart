@@ -19,6 +19,7 @@ import '../../features/booking/presentation/screens/booking_screen.dart';
 import '../../features/booking/presentation/screens/booking_confirmation_screen.dart';
 import '../../features/invoices/presentation/screens/invoice_detail_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
+import '../../features/legal/presentation/screens/legal_screen.dart';
 import '../../features/enquiry/presentation/screens/enquiry_screen.dart';
 import '../../features/tour_booking/presentation/screens/tour_booking_screen.dart';
 import '../../features/academy/presentation/screens/academy_about_screen.dart';
@@ -170,8 +171,16 @@ final router = GoRouter(
       builder: (_, __) => const NotificationsScreen(),
     ),
     GoRoute(
+      path: '/terms',
+      builder: (_, __) => const LegalScreen(document: LegalDocument.terms),
+    ),
+    GoRoute(
+      path: '/privacy',
+      builder: (_, __) => const LegalScreen(document: LegalDocument.privacy),
+    ),
+    GoRoute(
       path: '/enquiry',
-      builder: (_, __) => const EnquiryScreen(),
+      builder: (_, state) => EnquiryScreen(packageName: state.extra as String?),
     ),
     GoRoute(
       path: '/tour-booking',

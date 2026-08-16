@@ -31,27 +31,32 @@ class AppInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          Text(label!, style: Theme.of(context).textTheme.bodySmall),
-          const SizedBox(height: AppSpacing.sm),
-        ],
-        TextField(
-          controller: TextEditingController(text: value)..selection = TextSelection.fromPosition(TextPosition(offset: value.length)),
-          onChanged: onChanged,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          maxLines: isMultiline ? 4 : 1,
-          decoration: InputDecoration(
-            hintText: placeholder,
-            errorText: error,
-            prefixIcon: leftIcon,
-            suffixIcon: rightIcon,
+    return Semantics(
+      textField: true,
+      label: label ?? placeholder,
+      obscured: obscureText,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label != null) ...[
+            Text(label!, style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          TextField(
+            controller: TextEditingController(text: value)..selection = TextSelection.fromPosition(TextPosition(offset: value.length)),
+            onChanged: onChanged,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            maxLines: isMultiline ? 4 : 1,
+            decoration: InputDecoration(
+              hintText: placeholder,
+              errorText: error,
+              prefixIcon: leftIcon,
+              suffixIcon: rightIcon,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

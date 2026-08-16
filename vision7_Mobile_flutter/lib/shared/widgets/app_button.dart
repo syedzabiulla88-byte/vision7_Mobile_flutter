@@ -72,39 +72,54 @@ class AppButton extends StatelessWidget {
       AppButtonSize.lg => 16.0,
     };
 
-    return SizedBox(
-      width: fullWidth ? double.infinity : null,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          side: side,
-          padding: EdgeInsets.symmetric(
-            horizontal: size == AppButtonSize.sm ? 16 : 24,
-            vertical: 0,
-          ),
-          minimumSize: Size(0, height),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: TextStyle(
-            fontFamily: lang.lang == AppLanguage.ar ? 'Cairo' : null,
-            fontSize: fontSize,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
+    final effectiveTitle = isLoading ? '' : title;
+    final effectiveOnPressed = isLoading ? null : onPressed;
+
+    return Semantics(
+      label: effectiveTitle.isEmpty ? null : effectiveTitle,
+      button: true,
+      enabled: effectiveOnPressed != null,
+      child: Tooltip(
+        message: effectiveTitle,
+        child: SizedBox(
+          width: fullWidth ? double.infinity : null,
+          child: ElevatedButton(
+            onPressed: effectiveOnPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: backgroundColor,
+              foregroundColor: foregroundColor,
+              side: side,
+              padding: EdgeInsets.symmetric(
+                horizontal: size == AppButtonSize.sm ? 16 : 24,
+                vertical: 0,
+              ),
+              minimumSize: Size(0, height),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              textStyle: TextStyle(
+                fontFamily: lang.lang == AppLanguage.ar ? 'Cairo' : null,
+                fontSize: fontSize,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+            ),
+            child: isLoading
+                ? Semantics(
+                    label: 'Loading',
+                    liveRegion: true,
+                    child: const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.text)),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (icon != null) ...[
+                        icon!,
+                        const SizedBox(width: AppSpacing.sm),
+                      ],
+                      Text(effectiveTitle),
+                    ],
+                  ),
           ),
         ),
-        child: isLoading
-            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.text))
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (icon != null) ...[
-                    icon!,
-                    const SizedBox(width: AppSpacing.sm),
-                  ],
-                  Text(title),
-                ],
-              ),
       ),
     );
   }

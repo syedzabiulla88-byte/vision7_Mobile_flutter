@@ -11,4 +11,8 @@ class MeRepositoryImpl implements MeRepository {
 
   @override
   Future<Dashboard> getDashboard() => _remote.getDashboard();
+
+  @override
+  Future<void> updateProfilePhoto(String photoPath) =>
+      _remote.updateProfilePhoto(photoPath);
 }

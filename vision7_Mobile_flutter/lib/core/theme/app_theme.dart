@@ -19,11 +19,11 @@ class AppTheme {
             error: AppColors.error,
           )
         : const ColorScheme.light(
-            primary: AppColors.gold,
-            secondary: AppColors.goldDark,
+            primary: AppColors.black,
+            secondary: AppColors.grayDark,
             surface: AppColors.cream,
             onSurface: AppColors.text,
-            onPrimary: AppColors.text,
+            onPrimary: AppColors.cream,
             error: AppColors.error,
           );
 
@@ -62,21 +62,21 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.white,
-        selectedItemColor: isAcademy ? AppColors.academyGold : AppColors.gold,
+        selectedItemColor: isAcademy ? AppColors.academyGold : AppColors.black,
         unselectedItemColor: isAcademy ? AppColors.academyWhite : AppColors.muted,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.warmLight,
+        fillColor: isAcademy ? AppColors.cream.withValues(alpha: 0.1) : AppColors.warmLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.gold, width: 1.5),
+          borderSide: BorderSide(color: isAcademy ? AppColors.academyGold : AppColors.gold, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -85,13 +85,19 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintStyle: GoogleFonts.montserrat(
           fontSize: 14,
-          color: AppColors.muted,
+          color: isAcademy ? AppColors.cream.withValues(alpha: 0.5) : AppColors.muted,
+        ),
+        prefixIconColor: isAcademy ? AppColors.cream.withValues(alpha: 0.6) : AppColors.muted,
+        suffixIconColor: isAcademy ? AppColors.cream.withValues(alpha: 0.6) : AppColors.muted,
+        labelStyle: GoogleFonts.montserrat(
+          fontSize: 14,
+          color: isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isAcademy ? AppColors.academyGold : AppColors.gold,
-          foregroundColor: isAcademy ? AppColors.academyNavy : AppColors.text,
+          backgroundColor: isAcademy ? AppColors.academyGold : AppColors.black,
+          foregroundColor: isAcademy ? AppColors.academyNavy : AppColors.cream,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: GoogleFonts.montserrat(
@@ -103,27 +109,40 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: isAcademy ? AppColors.academyGold : AppColors.gold,
-          side: BorderSide(color: isAcademy ? AppColors.academyGold : AppColors.gold),
+          foregroundColor: isAcademy ? AppColors.academyGold : AppColors.black,
+          side: BorderSide(color: isAcademy ? AppColors.academyGold : AppColors.black),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: isAcademy ? AppColors.academyGold : AppColors.gold,
+          foregroundColor: isAcademy ? AppColors.academyGold : AppColors.black,
           textStyle: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.white,
+        color: isAcademy ? AppColors.cream.withValues(alpha: 0.1) : AppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 0,
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.warm,
+        color: isAcademy ? AppColors.cream.withValues(alpha: 0.12) : AppColors.warm,
         thickness: 1,
         space: 1,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.white,
+        titleTextStyle: GoogleFonts.playfairDisplay(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: isAcademy ? AppColors.cream : AppColors.text,
+        ),
+        contentTextStyle: GoogleFonts.montserrat(
+          fontSize: 14,
+          color: isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/providers/language_provider.dart';
@@ -8,6 +9,7 @@ import '../../../../shared/providers/mode_provider.dart';
 import '../../../../core/constants/spacing.dart';
 import '../widgets/auth_social_buttons.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../legal/presentation/screens/legal_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -19,10 +21,12 @@ class RegisterScreen extends StatelessWidget {
     final mode = context.watch<ModeProvider>();
     final isAcademy = mode.mode == AppMode.academy;
     final surface = isAcademy ? AppColors.academySurface : AppColors.cream;
-    final textOnSurface = isAcademy ? AppColors.cream : AppColors.navy;
+    final textOnSurface = isAcademy ? AppColors.cream : AppColors.black;
     final textMuted = isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted;
     final inputFill = isAcademy ? AppColors.academyInputFill : Colors.white;
     final inputBorder = isAcademy ? AppColors.gold : AppColors.grayBorder;
+    final accent = isAcademy ? AppColors.gold : AppColors.black;
+    final buttonTextColor = isAcademy ? AppColors.navy : AppColors.cream;
 
     return Scaffold(
       backgroundColor: surface,
@@ -45,8 +49,11 @@ class RegisterScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               Expanded(child: _RegisterForm(
                 textMuted: textMuted,
+                textOnSurface: textOnSurface,
                 inputFill: inputFill,
                 inputBorder: inputBorder,
+                accent: accent,
+                buttonTextColor: buttonTextColor,
                 isAcademy: isAcademy,
               )),
             ],
@@ -59,14 +66,20 @@ class RegisterScreen extends StatelessWidget {
 
 class _RegisterForm extends StatefulWidget {
   final Color textMuted;
+  final Color textOnSurface;
   final Color inputFill;
   final Color inputBorder;
+  final Color accent;
+  final Color buttonTextColor;
   final bool isAcademy;
 
   const _RegisterForm({
     required this.textMuted,
+    required this.textOnSurface,
     required this.inputFill,
     required this.inputBorder,
+    required this.accent,
+    required this.buttonTextColor,
     required this.isAcademy,
   });
 
@@ -81,6 +94,8 @@ class _RegisterFormState extends State<_RegisterForm> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _agreedToTerms = false;
+  bool _showAgreementError = false;
   String? _nameError;
   String? _emailError;
   String? _passwordError;
@@ -189,6 +204,10 @@ class _RegisterFormState extends State<_RegisterForm> {
 
   Future<void> _handleRegister() async {
     if (!_validate()) return;
+    if (!_agreedToTerms) {
+      setState(() => _showAgreementError = true);
+      return;
+    }
     if (_isLoading) return;
 
     setState(() => _isLoading = true);
@@ -199,6 +218,13 @@ class _RegisterFormState extends State<_RegisterForm> {
       email: _emailController.text.trim(),
       password: _passwordController.text,
     );
+
+    if (success) {
+      await Future.wait([
+        auth.acceptConsent('terms', LegalVersions.terms),
+        auth.acceptConsent('privacy', LegalVersions.privacy),
+      ]);
+    }
 
     if (mounted) {
       setState(() => _isLoading = false);
@@ -234,7 +260,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             errorText: _nameError,
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(borderSide: const BorderSide(color: AppColors.gold, width: 2)),
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: widget.accent, width: 2)),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -254,7 +280,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             errorText: _emailError,
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(borderSide: const BorderSide(color: AppColors.gold, width: 2)),
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: widget.accent, width: 2)),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -281,7 +307,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             ),
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(borderSide: const BorderSide(color: AppColors.gold, width: 2)),
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: widget.accent, width: 2)),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -305,7 +331,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             errorText: _confirmPasswordError,
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(borderSide: const BorderSide(color: AppColors.gold, width: 2)),
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: widget.accent, width: 2)),
           ),
         ),
 
@@ -340,6 +366,64 @@ class _RegisterFormState extends State<_RegisterForm> {
 
         const SizedBox(height: AppSpacing.lg),
 
+        // Terms & Privacy agreement
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: _agreedToTerms,
+                onChanged: (v) => setState(() {
+                  _agreedToTerms = v ?? false;
+                  if (_agreedToTerms) _showAgreementError = false;
+                }),
+                activeColor: widget.accent,
+                checkColor: widget.buttonTextColor,
+                side: BorderSide(color: widget.inputBorder),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() {
+                  _agreedToTerms = !_agreedToTerms;
+                  if (_agreedToTerms) _showAgreementError = false;
+                }),
+                child: Text.rich(
+                  TextSpan(
+                    style: TextStyle(color: widget.textMuted, fontSize: 13, height: 1.4),
+                    children: [
+                      TextSpan(text: t('auth.agreeToPrefix', fallback: 'I agree to the ')),
+                      TextSpan(
+                        text: t('profile.termsOfService', fallback: 'Terms of Service'),
+                        style: TextStyle(color: widget.accent, fontWeight: FontWeight.w600),
+                        recognizer: TapGestureRecognizer()..onTap = () => context.push('/terms'),
+                      ),
+                      TextSpan(text: t('auth.agreeToMiddle', fallback: ' and ')),
+                      TextSpan(
+                        text: t('profile.privacyPolicy', fallback: 'Privacy Policy'),
+                        style: TextStyle(color: widget.accent, fontWeight: FontWeight.w600),
+                        recognizer: TapGestureRecognizer()..onTap = () => context.push('/privacy'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (_showAgreementError) ...[
+          const SizedBox(height: 4),
+          Text(
+            t('auth.mustAgreeToTerms', fallback: 'Please accept the Terms of Service and Privacy Policy to continue'),
+            style: const TextStyle(color: AppColors.error, fontSize: 12),
+          ),
+        ],
+
+        const SizedBox(height: AppSpacing.lg),
+
         // Sign Up button
         SizedBox(
           width: double.infinity,
@@ -347,22 +431,23 @@ class _RegisterFormState extends State<_RegisterForm> {
             onPressed: _isLoading ? null : _handleRegister,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: AppColors.gold,
-              foregroundColor: AppColors.navy,
-              disabledBackgroundColor: AppColors.gold.withValues(alpha: 0.5),
+              backgroundColor: widget.accent,
+              foregroundColor: widget.buttonTextColor,
+              disabledBackgroundColor: widget.accent.withValues(alpha: 0.5),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.navy,
+                      color: widget.buttonTextColor,
                     ),
                   )
                 : Text(
                     t('auth.signUp', fallback: 'Sign Up'),
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 16, color: widget.buttonTextColor),
                   ),
           ),
         ),
@@ -370,7 +455,7 @@ class _RegisterFormState extends State<_RegisterForm> {
         const SizedBox(height: AppSpacing.lg),
 
         // Social sign-in
-        AuthSocialButtons(),
+        AuthSocialButtons(accent: widget.accent, textPrimary: widget.textOnSurface),
 
         const SizedBox(height: AppSpacing.md),
         Center(
@@ -381,10 +466,11 @@ class _RegisterFormState extends State<_RegisterForm> {
                 children: [
                   TextSpan(
                     text: t('auth.haveAccount', fallback: 'Already have an account? '),
+                    style: TextStyle(color: widget.textMuted),
                   ),
                   TextSpan(
                     text: t('auth.signIn', fallback: 'Sign In'),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(fontWeight: FontWeight.w700, color: widget.accent),
                   ),
                 ],
               ),

@@ -282,7 +282,7 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
   Widget _buildBottomBar(BuildContext context, Facility f, String Function(String, {String? fallback}) t) {
     final bookLabel = t('common.bookNow', fallback: 'Book Now');
     final isAcademy = context.watch<ModeProvider>().isAcademy;
-    final barColor = isAcademy ? AppColors.cream : AppColors.text;
+    final barColor = isAcademy ? AppColors.cream : AppColors.white;
     final btnFgColor = isAcademy ? AppColors.navy : AppColors.text;
     return Container(
       padding: EdgeInsets.fromLTRB(

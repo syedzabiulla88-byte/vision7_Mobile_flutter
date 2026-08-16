@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/providers/app_mode.dart';
 import '../../../../shared/providers/language_provider.dart';
+import '../../../../shared/providers/mode_provider.dart';
 
 class LanguageToggle extends StatelessWidget {
   const LanguageToggle({super.key});
@@ -10,11 +11,12 @@ class LanguageToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = context.watch<LanguageProvider>();
+    final isAcademy = context.watch<ModeProvider>().isAcademy;
 
-    final activeBg = AppColors.gold;
-    final activeText = AppColors.academyNavy;
+    final activeBg = isAcademy ? AppColors.gold : AppColors.black;
+    final activeText = isAcademy ? AppColors.academyNavy : AppColors.white;
     final inactiveText =
-        AppColors.academyWhite.withValues(alpha: 0.6);
+        isAcademy ? AppColors.academyWhite.withValues(alpha: 0.6) : AppColors.black.withValues(alpha: 0.6);
 
     return Container(
       padding: const EdgeInsets.all(4),

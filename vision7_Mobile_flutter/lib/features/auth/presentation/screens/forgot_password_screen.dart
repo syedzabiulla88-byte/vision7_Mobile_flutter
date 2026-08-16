@@ -19,10 +19,12 @@ class ForgotPasswordScreen extends StatelessWidget {
     final mode = context.watch<ModeProvider>();
     final isAcademy = mode.mode == AppMode.academy;
     final surface = isAcademy ? AppColors.academySurface : AppColors.cream;
-    final textOnSurface = isAcademy ? AppColors.cream : AppColors.navy;
+    final textOnSurface = isAcademy ? AppColors.cream : AppColors.black;
     final textMuted = isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted;
     final inputFill = isAcademy ? AppColors.academyInputFill : Colors.white;
     final inputBorder = isAcademy ? AppColors.gold : AppColors.grayBorder;
+    final accent = isAcademy ? AppColors.gold : AppColors.black;
+    final buttonTextColor = isAcademy ? AppColors.navy : AppColors.cream;
 
     return Scaffold(
       backgroundColor: surface,
@@ -34,7 +36,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () => context.pop(),
-                icon: Icon(Icons.arrow_back_ios, color: AppColors.gold),
+                icon: Icon(Icons.arrow_back_ios, color: accent),
               ),
               const SizedBox(height: AppSpacing.xxl),
               Text(
@@ -52,6 +54,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                 textMuted: textMuted,
                 inputFill: inputFill,
                 inputBorder: inputBorder,
+                accent: accent,
+                buttonTextColor: buttonTextColor,
                 isAcademy: isAcademy,
               )),
             ],
@@ -66,12 +70,16 @@ class _ForgotPasswordForm extends StatefulWidget {
   final Color textMuted;
   final Color inputFill;
   final Color inputBorder;
+  final Color accent;
+  final Color buttonTextColor;
   final bool isAcademy;
 
   const _ForgotPasswordForm({
     required this.textMuted,
     required this.inputFill,
     required this.inputBorder,
+    required this.accent,
+    required this.buttonTextColor,
     required this.isAcademy,
   });
 
@@ -155,7 +163,7 @@ class _ForgotPasswordFormState extends State<_ForgotPasswordForm> {
           const SizedBox(height: AppSpacing.lg),
           Text(
             t('auth.resetLinkSent', fallback: 'Reset link sent!'),
-            style: Theme.of(context).textTheme.h3.copyWith(color: widget.isAcademy ? AppColors.cream : AppColors.navy),
+            style: Theme.of(context).textTheme.h3.copyWith(color: widget.isAcademy ? AppColors.cream : AppColors.black),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -171,8 +179,8 @@ class _ForgotPasswordFormState extends State<_ForgotPasswordForm> {
               onPressed: () => context.go('/login'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: AppColors.gold,
-                foregroundColor: AppColors.navy,
+                backgroundColor: widget.accent,
+                foregroundColor: widget.buttonTextColor,
               ),
               child: Text(t('auth.backToLogin', fallback: 'Back to Login')),
             ),
@@ -227,7 +235,7 @@ class _ForgotPasswordFormState extends State<_ForgotPasswordForm> {
             errorText: _emailError,
             border: border,
             enabledBorder: border,
-            focusedBorder: border.copyWith(borderSide: const BorderSide(color: AppColors.gold, width: 2)),
+            focusedBorder: border.copyWith(borderSide: BorderSide(color: widget.accent, width: 2)),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -237,22 +245,23 @@ class _ForgotPasswordFormState extends State<_ForgotPasswordForm> {
             onPressed: _isLoading ? null : _handleSubmit,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: AppColors.gold,
-              foregroundColor: AppColors.navy,
-              disabledBackgroundColor: AppColors.gold.withValues(alpha: 0.5),
+              backgroundColor: widget.accent,
+              foregroundColor: widget.buttonTextColor,
+              disabledBackgroundColor: widget.accent.withValues(alpha: 0.5),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.navy,
+                      color: widget.buttonTextColor,
                     ),
                   )
                 : Text(
                     t('auth.sendResetLink', fallback: 'Send Reset Link'),
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 16, color: widget.buttonTextColor),
                   ),
           ),
         ),

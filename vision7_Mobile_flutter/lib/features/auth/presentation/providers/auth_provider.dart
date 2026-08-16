@@ -1,15 +1,18 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../domain/auth_repository.dart';
 import '../../domain/user.dart';
+import '../../../../shared/services/push_notification_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _repository;
+  final PushNotificationService? _push;
   User? _user;
   bool _isLoading = true;
   String? _error;
 
-  AuthProvider(this._repository) {
+  AuthProvider(this._repository, [this._push]) {
     _loadUser();
   }
 
@@ -28,6 +31,7 @@ class AuthProvider extends ChangeNotifier {
         if (profile != null) {
           _user = profile;
           await _repository.saveUser(profile);
+          unawaited(_push?.initialize());
         }
       } on Exception {
         await _repository.clearAll();
@@ -53,6 +57,7 @@ class AuthProvider extends ChangeNotifier {
       _user = result.user;
       _isLoading = false;
       notifyListeners();
+      unawaited(_push?.initialize());
       return true;
     } catch (e) {
       _error = e.toString();
@@ -86,6 +91,7 @@ class AuthProvider extends ChangeNotifier {
       _user = result.user;
       _isLoading = false;
       notifyListeners();
+      unawaited(_push?.initialize());
       return true;
     } catch (e) {
       _error = e.toString();
@@ -107,6 +113,7 @@ class AuthProvider extends ChangeNotifier {
       _user = result.user;
       _isLoading = false;
       notifyListeners();
+      unawaited(_push?.initialize());
       return true;
     } catch (e) {
       _error = e.toString();
@@ -128,6 +135,7 @@ class AuthProvider extends ChangeNotifier {
       _user = result.user;
       _isLoading = false;
       notifyListeners();
+      unawaited(_push?.initialize());
       return true;
     } catch (e) {
       _error = e.toString();
@@ -153,6 +161,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    await _push?.onLogout();
     await _repository.logout();
     _user = null;
     _error = null;
@@ -167,6 +176,15 @@ class AuthProvider extends ChangeNotifier {
         await _repository.saveUser(profile);
         notifyListeners();
       }
+    } catch (_) {}
+  }
+
+  /// Record acceptance of a versioned legal document (terms/privacy). Never
+  /// blocks the caller on failure — consent recording shouldn't stop the
+  /// user from proceeding into the app they just registered for.
+  Future<void> acceptConsent(String type, String version) async {
+    try {
+      await _repository.acceptConsent(type, version);
     } catch (_) {}
   }
 

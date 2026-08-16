@@ -46,40 +46,40 @@ class ModeProvider extends ChangeNotifier {
 
 extension ModeProviderColors on ModeProvider {
   Color get accent =>
-      isAcademy ? AppColors.gold : AppColors.navy;
+      isAcademy ? AppColors.gold : AppColors.black;
 
   Color get bg =>
       isAcademy ? AppColors.navy : AppColors.cream;
 
   Color get textPrimary =>
-      isAcademy ? AppColors.cream : AppColors.navy;
+      isAcademy ? AppColors.cream : AppColors.black;
 
   Color get textMuted =>
       isAcademy
           ? AppColors.cream.withValues(alpha: 0.6)
-          : AppColors.navy.withValues(alpha: 0.5);
+          : AppColors.black.withValues(alpha: 0.5);
 
   Color get chipBg =>
       isAcademy
           ? AppColors.cream.withValues(alpha: 0.12)
-          : AppColors.navy.withValues(alpha: 0.08);
+          : AppColors.black.withValues(alpha: 0.08);
 
   Color get inputFill =>
       isAcademy
           ? AppColors.cream.withValues(alpha: 0.1)
-          : AppColors.navy.withValues(alpha: 0.07);
+          : AppColors.black.withValues(alpha: 0.05);
 
   Color get surface =>
       isAcademy ? AppColors.academySurface : AppColors.cream;
 
   Color get textOnSurface =>
-      isAcademy ? AppColors.cream : AppColors.navy;
+      isAcademy ? AppColors.cream : AppColors.black;
 
   Color get inputBorder =>
       isAcademy ? AppColors.gold : AppColors.grayBorder;
 
   Color get backButton =>
-      isAcademy ? AppColors.cream : AppColors.navy;
+      isAcademy ? AppColors.cream : AppColors.black;
 
   Color get buttonTextColor =>
       isAcademy ? AppColors.navy : AppColors.cream;

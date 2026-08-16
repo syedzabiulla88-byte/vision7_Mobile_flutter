@@ -9,9 +9,23 @@ import '../../../../shared/providers/app_mode.dart';
 import '../providers/notifications_provider.dart';
 import '../../domain/notification.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/pressable_card.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NotificationsProvider>().loadNotifications();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,20 +46,23 @@ class NotificationsScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back_ios, color: isAcademy ? AppColors.cream : AppColors.cream),
+                    icon: Icon(Icons.arrow_back_ios, color: isAcademy ? AppColors.cream : AppColors.black),
                   ),
                   Expanded(
                     child: Text(
                       t('notifications.title', fallback: 'Notifications'),
-                      style: Theme.of(context).textTheme.displayLarge,
+                      style: Theme.of(context).textTheme.h2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (notificationsProvider.unreadCount > 0)
-                    TextButton(
+                    IconButton(
                       onPressed: () => notificationsProvider.markAllAsRead(),
-                      child: Text(
-                        t('notifications.markAllRead', fallback: 'Mark all read'),
-                        style: const TextStyle(color: AppColors.gold, fontSize: 13),
+                      tooltip: t('notifications.markAllRead', fallback: 'Mark all read'),
+                      icon: Icon(
+                        Icons.done_all,
+                        color: isAcademy ? AppColors.gold : AppColors.black,
                       ),
                     ),
                 ],
@@ -131,8 +148,10 @@ class _NotificationTile extends StatelessWidget {
     return Dismissible(
       key: Key(notification.id),
       onDismissed: (_) => onDismiss(),
-      child: GestureDetector(
+      child: PressableCard(
+        isAcademy: isAcademy,
         onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(

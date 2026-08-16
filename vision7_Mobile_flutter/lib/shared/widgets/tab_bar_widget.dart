@@ -13,41 +13,44 @@ class TabBarWidget extends StatelessWidget {
     final mode = context.watch<ModeProvider>();
     final t = context.watch<LanguageProvider>().t;
 
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: mode.isAcademy ? AppColors.academyNavy : AppColors.white,
-      selectedItemColor: AppColors.gold,
-      unselectedItemColor: AppColors.muted,
-      elevation: 8,
-      currentIndex: _getCurrentIndex(context),
-      onTap: (index) => _onTap(context, index),
-      items: [
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.home_outlined),
-          activeIcon: const Icon(Icons.home),
-          label: t('tab.home', fallback: 'Home'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.explore_outlined),
-          activeIcon: const Icon(Icons.explore),
-          label: t('tab.explore', fallback: 'Explore'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.calendar_today_outlined),
-          activeIcon: const Icon(Icons.calendar_today),
-          label: t('tab.bookings', fallback: 'Bookings'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.card_membership_outlined),
-          activeIcon: const Icon(Icons.card_membership),
-          label: t('tab.membership', fallback: 'Membership'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.person_outline),
-          activeIcon: const Icon(Icons.person),
-          label: t('tab.profile', fallback: 'Profile'),
-        ),
-      ],
+    return Semantics(
+      label: 'Navigation bar',
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: mode.isAcademy ? AppColors.academyNavy : AppColors.white,
+        selectedItemColor: mode.isAcademy ? AppColors.gold : AppColors.black,
+        unselectedItemColor: AppColors.muted,
+        elevation: 8,
+        currentIndex: _getCurrentIndex(context),
+        onTap: (index) => _onTap(context, index),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: t('tab.home', fallback: 'Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.explore_outlined),
+            activeIcon: const Icon(Icons.explore),
+            label: t('tab.explore', fallback: 'Explore'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.calendar_today_outlined),
+            activeIcon: const Icon(Icons.calendar_today),
+            label: t('tab.bookings', fallback: 'Bookings'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.card_membership_outlined),
+            activeIcon: const Icon(Icons.card_membership),
+            label: t('tab.membership', fallback: 'Membership'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person_outline),
+            activeIcon: const Icon(Icons.person),
+            label: t('tab.profile', fallback: 'Profile'),
+          ),
+        ],
+      ),
     );
   }
 
