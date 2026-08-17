@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Vision7 — Flick</string>
+	<string>Vision7</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Flick</string>
+	<string>Vision 7</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -47,8 +47,6 @@
 	<string>Save your profile photo to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Choose a photo from your library for your profile picture.</string>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>Enable notifications to receive booking reminders, membership updates, and Vision7 announcements.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
