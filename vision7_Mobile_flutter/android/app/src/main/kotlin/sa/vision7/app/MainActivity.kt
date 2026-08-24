@@ -1,4 +1,4 @@
-package com.example.vision7
+package sa.vision7.app
 
 import io.flutter.embedding.android.FlutterActivity
 

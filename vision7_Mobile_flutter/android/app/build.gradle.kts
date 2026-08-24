@@ -19,8 +19,6 @@ android {
 
     signingConfigs {
         create("release") {
-            // Signing config is loaded from key.properties (git-ignored).
-            // Run: keytool -genkey -v -keystore vision7-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias vision7
             val keystoreProperties = Properties()
             val keystoreFile = file("key.properties")
             if (keystoreFile.exists()) {
@@ -35,8 +33,6 @@ android {
 
     defaultConfig {
         applicationId = "sa.vision7.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -46,12 +42,12 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
-        }
-        debug {
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
