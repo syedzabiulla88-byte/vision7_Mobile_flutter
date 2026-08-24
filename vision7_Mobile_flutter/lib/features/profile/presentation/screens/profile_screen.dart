@@ -231,6 +231,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _showDeleteAccountDialog(BuildContext context) async {
+    final isAcademy = context.read<ModeProvider>().isAcademy;
+    final dialogText = isAcademy ? AppColors.cream : AppColors.text;
+    final dialogMuted = isAcademy ? AppColors.cream.withValues(alpha: 0.7) : AppColors.muted;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.white,
+        title: Text(
+          context.read<LanguageProvider>().t('auth.deleteAccount', fallback: 'Delete Account'),
+          style: TextStyle(color: dialogText),
+        ),
+        content: Text(
+          context.read<LanguageProvider>().t(
+                'auth.deleteAccountConfirm',
+                fallback:
+                    'This permanently deletes your account and personal data. This cannot be undone. Are you sure?',
+              ),
+          style: TextStyle(color: dialogMuted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              context.read<LanguageProvider>().t('common.cancel', fallback: 'Cancel'),
+              style: TextStyle(color: dialogMuted),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              context.read<LanguageProvider>().t('auth.deleteAccount', fallback: 'Delete Account'),
+              style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final success = await context.read<AuthProvider>().deleteAccount();
+    if (!context.mounted) return;
+    if (success) {
+      context.go('/login');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.read<LanguageProvider>().t(
+                  'auth.deleteAccountFailed',
+                  fallback: 'Could not delete your account. Please try again.',
+                ),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.read<LanguageProvider>().t;
@@ -333,6 +391,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () => context.push('/invoices'),
                     ),
                     _ProfileMenuItem(
+                      icon: Icons.qr_code_2_outlined,
+                      label: t('profile.accessPass', fallback: 'Access Pass'),
+                      onTap: () => context.push('/access-pass'),
+                    ),
+                    _ProfileMenuItem(
                       icon: Icons.notifications_outlined,
                       label: t('profile.notifications', fallback: 'Notifications'),
                       onTap: () => context.push('/notifications'),
@@ -399,6 +462,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () => _showDeleteAccountDialog(context),
+                        child: Text(
+                          t('auth.deleteAccount', fallback: 'Delete Account'),
+                          style: const TextStyle(
+                            color: AppColors.error,
+                            fontSize: 12,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -453,7 +530,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: nameCtrl,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
-                      labelText: 'Full Name',
+                      labelText: context.read<LanguageProvider>().t('profile.fullName', fallback: 'Full Name'),
                       labelStyle: TextStyle(color: mutedColor),
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                     ),
@@ -463,7 +540,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(color: textColor),
                     enabled: false,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: context.read<LanguageProvider>().t('profile.email', fallback: 'Email'),
                       labelStyle: TextStyle(color: mutedColor),
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                     ),
@@ -472,7 +549,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: phoneCtrl,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
-                      labelText: 'Phone',
+                      labelText: context.read<LanguageProvider>().t('profile.phone', fallback: 'Phone'),
                       labelStyle: TextStyle(color: mutedColor),
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                     ),
@@ -481,7 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: cityCtrl,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
-                      labelText: 'City',
+                      labelText: context.read<LanguageProvider>().t('profile.city', fallback: 'City'),
                       labelStyle: TextStyle(color: mutedColor),
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                     ),

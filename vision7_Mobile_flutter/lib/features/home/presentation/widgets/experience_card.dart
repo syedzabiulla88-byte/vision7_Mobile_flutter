@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constants/spacing.dart';
 import '../../../../core/theme/custom_text_theme.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/providers/language_provider.dart';
 
 class ExperienceCard extends StatelessWidget {
   final String title;
@@ -21,6 +23,7 @@ class ExperienceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<LanguageProvider>().t;
     final mode = isAcademy;
     final accent = mode ? AppColors.gold : AppColors.black;
     final cardFill = mode
@@ -55,7 +58,7 @@ class ExperienceCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      'SOON',
+                      t('common.soon', fallback: 'SOON'),
                       style: TextStyle(color: accent, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                     ),
                   ),

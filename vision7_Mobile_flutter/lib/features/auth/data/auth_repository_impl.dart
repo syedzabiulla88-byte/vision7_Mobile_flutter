@@ -51,6 +51,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> forgotPassword(String email) => _remote.forgotPassword(email);
 
   @override
+  Future<void> deleteAccount() => _remote.deleteAccount();
+
+  @override
   Future<User?> getProfile() => _remote.getProfile();
 
   @override

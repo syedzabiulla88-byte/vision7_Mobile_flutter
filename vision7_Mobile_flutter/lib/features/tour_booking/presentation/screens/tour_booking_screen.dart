@@ -90,12 +90,11 @@ class _TourBookingScreenState extends State<TourBookingScreen> {
   Future<void> _pickDate() async {
     final isAcademy = context.read<ModeProvider>().isAcademy;
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final initialDate = _selectedDate.isBefore(now) ? now : _selectedDate;
+    final lastDate = now.add(const Duration(days: 90));
+    final picked = await showDialog<DateTime>(
       context: context,
-      initialDate: _selectedDate.isBefore(now) ? now : _selectedDate,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 90)),
-      builder: (ctx, child) {
+      builder: (ctx) {
         return Theme(
           data: Theme.of(ctx).copyWith(
             colorScheme: ColorScheme.dark(
@@ -105,7 +104,24 @@ class _TourBookingScreenState extends State<TourBookingScreen> {
               onSurface: AppColors.cream,
             ),
           ),
-          child: child!,
+          child: Dialog(
+            backgroundColor: _bgDark,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: SizedBox(
+              width: 330,
+              height: 420,
+              // Selecting a day pops the dialog immediately — no separate
+              // OK button to find, since that confirm step was easy to
+              // miss against the dark/gold theme and read as "tapping a
+              // date does nothing".
+              child: CalendarDatePicker(
+                initialDate: initialDate,
+                firstDate: now,
+                lastDate: lastDate,
+                onDateChanged: (date) => Navigator.of(ctx).pop(date),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -148,8 +164,8 @@ class _TourBookingScreenState extends State<TourBookingScreen> {
           SnackBar(
             content: Text(t(
               'tour.confirmed',
-              fallback: 'Tour booked for $_dateDisplay at $_selectedTime',
-            )),
+              fallback: 'Tour booked for {date} at {time}',
+            ).replaceFirst('{date}', _dateDisplay).replaceFirst('{time}', _selectedTime)),
             backgroundColor: AppColors.success,
           ),
         );

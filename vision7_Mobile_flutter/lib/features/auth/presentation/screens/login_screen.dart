@@ -8,6 +8,7 @@ import '../../../../core/constants/spacing.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/language_provider.dart';
 import '../../../../shared/providers/mode_provider.dart';
+import '../../../../core/network/friendly_error.dart';
 import '../widgets/auth_social_buttons.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -241,16 +242,20 @@ class _LoginFormState extends State<_LoginForm> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.login(
+      final success = await authProvider.login(
         _emailController.text.trim(),
         _passwordController.text,
       );
-      if (mounted && authProvider.isAuthenticated) {
-        context.go('/home');
+      if (mounted) {
+        if (success && authProvider.isAuthenticated) {
+          context.go('/home');
+        } else if (!success) {
+          setState(() => _authError = authProvider.error);
+        }
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _authError = e.toString());
+        setState(() => _authError = friendlyAuthErrorMessage(e));
       }
     } finally {
       if (mounted) {
@@ -280,7 +285,7 @@ class _LoginFormState extends State<_LoginForm> {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    _authError!.replaceFirst('Exception: ', ''),
+                    _authError!,
                     style: TextStyle(color: AppColors.error, fontSize: 13),
                   ),
                 ),

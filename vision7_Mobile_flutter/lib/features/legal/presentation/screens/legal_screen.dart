@@ -23,7 +23,8 @@ class LegalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.read<LanguageProvider>().t;
+    final lang = context.watch<LanguageProvider>();
+    final t = lang.t;
     final isAcademy = context.watch<ModeProvider>().isAcademy;
     final isTerms = document == LegalDocument.terms;
 
@@ -69,7 +70,9 @@ class LegalScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      isTerms ? _termsBody : _privacyBody,
+                      isTerms
+                          ? (lang.isArabic ? _termsBodyAr : _termsBody)
+                          : (lang.isArabic ? _privacyBodyAr : _privacyBody),
                       style: Theme.of(context).textTheme.body.copyWith(height: 1.6),
                     ),
                   ],
@@ -107,6 +110,35 @@ Vision7 may update these terms from time to time. Continued use of the app after
 6. Contact
 
 Questions about these terms can be directed to Vision7 support.
+''';
+
+// Machine-translated by Claude — needs legal/compliance review before being
+// treated as the authoritative Arabic text (PDPL-specific terminology in
+// particular should be checked against counsel-reviewed language).
+const _termsBodyAr = '''
+1. قبول الشروط
+
+بإنشاء حساب في فيجن7 أو استخدام تطبيق فيجن7، فإنك توافق على الالتزام بشروط الخدمة هذه. إذا كنت لا توافق، فيرجى عدم استخدام التطبيق.
+
+2. حجوزات المرافق والعضويات
+
+تخضع الحجوزات وعمليات شراء العضويات وإلغائها التي تتم عبر التطبيق لقواعد مرافق فيجن7، وسياسة الاسترداد، والأسعار المعروضة وقت الشراء.
+
+3. مسؤولية الحساب
+
+أنت مسؤول عن الحفاظ على سرية بيانات تسجيل الدخول الخاصة بك وعن جميع الأنشطة التي تتم تحت حسابك.
+
+4. السلوك
+
+يجب على المستخدمين اتباع قواعد السلامة الخاصة بالمرافق وتعليمات الموظفين في جميع مواقع أكاديمية فيجن7 وفيجن7 للترفيه.
+
+5. التغييرات على هذه الشروط
+
+يجوز لفيجن7 تحديث هذه الشروط من وقت لآخر. يُعد استمرار استخدام التطبيق بعد سريان التغييرات بمثابة قبول للشروط المعدَّلة.
+
+6. التواصل
+
+يمكن توجيه الأسئلة حول هذه الشروط إلى فريق دعم فيجن7.
 ''';
 
 const _privacyBody = '''
@@ -153,4 +185,53 @@ We use encrypted servers, firewalls, role-based access controls, and staff train
 11. Contact
 
 Questions about this policy? Email privacy@vision7.sa or call +966 9200 19777.
+''';
+
+// Machine-translated by Claude — needs legal/compliance review before being
+// treated as the authoritative Arabic text (PDPL-specific terminology in
+// particular should be checked against counsel-reviewed language).
+const _privacyBodyAr = '''
+1. من نحن
+
+شركة VA 7 (أكاديمية فيجن7) هي جهة التحكم في البيانات. نُدير مرافق وأكاديميات رياضية في المملكة العربية السعودية.
+
+2. ما نجمعه
+
+نجمع: اسمك، بريدك الإلكتروني، رقم هاتفك، تاريخ ميلادك، بيانات اعتماد الحساب، نشاط الحجوزات والعضوية، معلومات الدفع، والصور التي ترفعها. كما نجمع بيانات الجهاز والاستخدام لتشغيل التطبيق.
+
+3. سبب استخدامنا لبياناتك
+
+تُستخدم بياناتك لإنشاء حسابك وإدارته، ومعالجة الحجوزات والمدفوعات، وتقديم خدمات الأكاديمية والمرافق، وإرسال تذكيرات وإشعارات الحجز، وللاتصالات التسويقية — حيثما وافقت على ذلك.
+
+4. الأطفال وأولياء الأمور
+
+يجب تسجيل اللاعبين دون سن 18 عامًا من قِبل أحد الوالدين أو ولي الأمر الشرعي. موافقة ولي الأمر مطلوبة للبيانات المتعلقة بالصحة والاتصالات التسويقية.
+
+5. كيف نشارك البيانات
+
+نحن لا نبيع بياناتك الشخصية. نشاركها فقط مع مزودي الخدمات اللازمة لتشغيل فيجن7 — معالجات الدفع (تابي، تمارا، فيزا، ماستركارد)، مزودي الاستضافة السحابية، والجهات الرسمية عند الاقتضاء القانوني.
+
+6. استضافة البيانات
+
+تُستضاف جميع البيانات داخل المملكة العربية السعودية. تخضع عمليات نقل البيانات عبر الحدود لضمانات حماية البيانات المعمول بها.
+
+7. مدة الاحتفاظ بالبيانات
+
+يتم الاحتفاظ ببيانات حسابك طوال فترة نشاط الحساب بالإضافة إلى خمس سنوات. يتم الاحتفاظ بتسجيلات كاميرات المراقبة لمدة 30 إلى 90 يومًا.
+
+8. حقوقك
+
+يمكنك طلب الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها. يمكنك سحب موافقتك على التسويق في أي وقت. يمكن تقديم الطلبات عبر التواصل مع privacy@vision7.sa.
+
+9. الاتصالات التسويقية
+
+يمكنك إلغاء الاشتراك في الاتصالات التسويقية في أي وقت عبر إعدادات التطبيق، أو روابط إلغاء الاشتراك في الرسائل الإلكترونية، أو بالتواصل مع فريق الدعم لدينا.
+
+10. الأمان
+
+نستخدم خوادم مشفّرة وجدران حماية وضوابط وصول قائمة على الأدوار وتدريب الموظفين لحماية بياناتك.
+
+11. التواصل
+
+هل لديك أسئلة حول هذه السياسة؟ راسلنا عبر privacy@vision7.sa أو اتصل على 19777 9200 966+.
 ''';

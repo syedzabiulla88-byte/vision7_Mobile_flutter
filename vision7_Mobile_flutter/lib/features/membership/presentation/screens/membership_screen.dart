@@ -116,7 +116,7 @@ class _MembershipScreenState extends State<MembershipScreen> {
                           style: Theme.of(context).textTheme.h3,
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        ..._academyStaticPlans.map((plan) => Padding(
+                        ..._academyStaticPlans(t).map((plan) => Padding(
                               padding: const EdgeInsets.only(bottom: AppSpacing.md),
                               child: _StaticPlanCard(plan: plan, onEnquire: () => context.push('/enquiry', extra: plan.title)),
                             )),
@@ -272,7 +272,8 @@ class _ActiveMembershipCard extends StatelessWidget {
                     child: Text(
                       daysRemaining == 0
                           ? t('membership.renewsToday', fallback: 'Renews today')
-                          : t('membership.renewsIn', fallback: 'Renews in $daysRemaining days'),
+                          : t('membership.renewsIn', fallback: 'Renews in {n} days')
+                              .replaceFirst('{n}', '$daysRemaining'),
                       style: const TextStyle(color: Color(0xFFE8A33D), fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -416,63 +417,65 @@ class _StaticPlan {
   });
 }
 
-final List<_StaticPlan> _academyStaticPlans = [
-  const _StaticPlan(
-    tag: 'BEST VALUE',
-    title: 'FULL SEASON',
+List<_StaticPlan> _academyStaticPlans(String Function(String key, {String? fallback}) t) => [
+  _StaticPlan(
+    tag: t('membership.academyPlan.fullSeason.tag', fallback: 'BEST VALUE'),
+    title: t('membership.academyPlan.fullSeason.title', fallback: 'FULL SEASON'),
     highlighted: true,
     benefits: [
-      'World Leading Practitioners',
-      'UEFA Qualified Coaches, With Top Premier League Club Experience',
-      'State Of The Art European Equipment, Sourced By 1 Of Only 5 FIFA Approved Distributors Across The World',
-      'FIFA Size Pitches',
-      'State Of The Art Stadium Style Lighting',
-      'All Staff Fully Vetted And Screened Ensuring DBS, Safeguarding, And First Aid Certified',
-      'Head Of Medical + Fully Qualified Physiotherapy Team',
-      'Fully Equipped Medical Room With All Emergency Medical Equipment On Site',
-      'Emergency Action Plan Throughout Site',
-      'x3 Outdoor Sessions Weekly',
-      'Access To Our Indoor Performance Hub',
-      'Competitive Fixtures And Tournaments',
-      'Alignment And Relationships With World-Wide Clubs',
-      'Talent Identification Opportunities Throughout Our Pathway',
-      'Nutrition / Sport Psychology / Sports Science Monitoring',
-      'SAFF & England National Team Standard Analysis Systems And Softwares',
-      'Organised Schedule To Allow For Male And Female Sessions',
-      'Mixture Of Male And Female Staff To Accommodate All',
-      'Holistic Individual Development Plans',
+      t('membership.academyPlan.fullSeason.benefit1', fallback: 'World Leading Practitioners'),
+      t('membership.academyPlan.fullSeason.benefit2', fallback: 'UEFA Qualified Coaches, With Top Premier League Club Experience'),
+      t('membership.academyPlan.fullSeason.benefit3', fallback: 'State Of The Art European Equipment, Sourced By 1 Of Only 5 FIFA Approved Distributors Across The World'),
+      t('membership.academyPlan.fullSeason.benefit4', fallback: 'FIFA Size Pitches'),
+      t('membership.academyPlan.fullSeason.benefit5', fallback: 'State Of The Art Stadium Style Lighting'),
+      t('membership.academyPlan.fullSeason.benefit6', fallback: 'All Staff Fully Vetted And Screened Ensuring DBS, Safeguarding, And First Aid Certified'),
+      t('membership.academyPlan.fullSeason.benefit7', fallback: 'Head Of Medical + Fully Qualified Physiotherapy Team'),
+      t('membership.academyPlan.fullSeason.benefit8', fallback: 'Fully Equipped Medical Room With All Emergency Medical Equipment On Site'),
+      t('membership.academyPlan.fullSeason.benefit9', fallback: 'Emergency Action Plan Throughout Site'),
+      t('membership.academyPlan.fullSeason.benefit10', fallback: 'x3 Outdoor Sessions Weekly'),
+      t('membership.academyPlan.fullSeason.benefit11', fallback: 'Access To Our Indoor Performance Hub'),
+      t('membership.academyPlan.fullSeason.benefit12', fallback: 'Competitive Fixtures And Tournaments'),
+      t('membership.academyPlan.fullSeason.benefit13', fallback: 'Alignment And Relationships With World-Wide Clubs'),
+      t('membership.academyPlan.fullSeason.benefit14', fallback: 'Talent Identification Opportunities Throughout Our Pathway'),
+      t('membership.academyPlan.fullSeason.benefit15', fallback: 'Nutrition / Sport Psychology / Sports Science Monitoring'),
+      t('membership.academyPlan.fullSeason.benefit16', fallback: 'SAFF & England National Team Standard Analysis Systems And Softwares'),
+      t('membership.academyPlan.fullSeason.benefit17', fallback: 'Organised Schedule To Allow For Male And Female Sessions'),
+      t('membership.academyPlan.fullSeason.benefit18', fallback: 'Mixture Of Male And Female Staff To Accommodate All'),
+      t('membership.academyPlan.fullSeason.benefit19', fallback: 'Holistic Individual Development Plans'),
     ],
   ),
-  const _StaticPlan(
-    title: 'QUARTERLY OPTION',
-    description: 'A flexible option with limited benefits compared to the full season membership.',
+  _StaticPlan(
+    title: t('membership.academyPlan.quarterly.title', fallback: 'QUARTERLY OPTION'),
+    description: t('membership.academyPlan.quarterly.description',
+        fallback: 'A flexible option with limited benefits compared to the full season membership.'),
   ),
-  const _StaticPlan(
-    title: '1-2-1 PRIVATE TECHNICAL COACHING',
+  _StaticPlan(
+    title: t('membership.academyPlan.private.title', fallback: '1-2-1 PRIVATE TECHNICAL COACHING'),
     benefits: [
-      'High-intensity personalized development',
-      "Aligned to player's individual development plan",
-      'Position-specific drills',
-      'Video analysis (optional add-on)',
+      t('membership.academyPlan.private.benefit1', fallback: 'High-intensity personalized development'),
+      t('membership.academyPlan.private.benefit2', fallback: "Aligned to player's individual development plan"),
+      t('membership.academyPlan.private.benefit3', fallback: 'Position-specific drills'),
+      t('membership.academyPlan.private.benefit4', fallback: 'Video analysis (optional add-on)'),
     ],
   ),
-  const _StaticPlan(
-    tag: 'FAMILY PACKAGE',
-    title: '2 ADULT X 2 CHILDREN',
+  _StaticPlan(
+    tag: t('membership.academyPlan.family.tag', fallback: 'FAMILY PACKAGE'),
+    title: t('membership.academyPlan.family.title', fallback: '2 ADULT X 2 CHILDREN'),
     highlighted: true,
-    description: 'A bundled package designed for families training together at Vision7.',
+    description: t('membership.academyPlan.family.description',
+        fallback: 'A bundled package designed for families training together at Vision7.'),
     benefits: [
-      '2 Adults Gym Membership',
-      '2 Children Academy Membership',
-      '1x Padel Booking Monthly',
-      'Free Birthday Party',
-      'x2 PT Sessions',
-      'x2 Private Technical Coaching Sessions',
+      t('membership.academyPlan.family.benefit1', fallback: '2 Adults Gym Membership'),
+      t('membership.academyPlan.family.benefit2', fallback: '2 Children Academy Membership'),
+      t('membership.academyPlan.family.benefit3', fallback: '1x Padel Booking Monthly'),
+      t('membership.academyPlan.family.benefit4', fallback: 'Free Birthday Party'),
+      t('membership.academyPlan.family.benefit5', fallback: 'x2 PT Sessions'),
+      t('membership.academyPlan.family.benefit6', fallback: 'x2 Private Technical Coaching Sessions'),
     ],
   ),
-  const _StaticPlan(
-    title: 'MINI KICKERS - 3 MONTHS',
-    description: '2 Sessions per week for 3 months',
+  _StaticPlan(
+    title: t('membership.academyPlan.miniKickers.title', fallback: 'MINI KICKERS - 3 MONTHS'),
+    description: t('membership.academyPlan.miniKickers.description', fallback: '2 Sessions per week for 3 months'),
   ),
 ];
 
@@ -484,6 +487,7 @@ class _StaticPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<LanguageProvider>().t;
     return PressableCard(
       isAcademy: true,
       onTap: onEnquire,
@@ -561,7 +565,7 @@ class _StaticPlanCard extends StatelessWidget {
                             foregroundColor: AppColors.academyNavy,
                           ),
                           onPressed: onEnquire,
-                          child: const Text('ENQUIRE NOW', style: TextStyle(fontWeight: FontWeight.w800)),
+                          child: Text(t('common.enquireNow', fallback: 'Enquire Now'), style: const TextStyle(fontWeight: FontWeight.w800)),
                         )
                       : OutlinedButton(
                           style: OutlinedButton.styleFrom(
@@ -569,7 +573,7 @@ class _StaticPlanCard extends StatelessWidget {
                             side: const BorderSide(color: AppColors.gold),
                           ),
                           onPressed: onEnquire,
-                          child: const Text('ENQUIRE NOW', style: TextStyle(fontWeight: FontWeight.w800)),
+                          child: Text(t('common.enquireNow', fallback: 'Enquire Now'), style: const TextStyle(fontWeight: FontWeight.w800)),
                         ),
                 ),
               ],

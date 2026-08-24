@@ -53,7 +53,7 @@ class AuthRemoteDataSource {
   Future<AuthResult> googleLogin(String idToken) async {
     final result = await _client.post<AuthResult>(
       '/auth/google',
-      {'id_token': idToken},
+      {'idToken': idToken},
       fromJson: (json) => AuthResult(
         accessToken: json['accessToken'] as String,
         user: User.fromJson(json['user'] as Map<String, dynamic>),
@@ -64,7 +64,7 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthResult> appleLogin(String idToken, {Map<String, dynamic>? user}) async {
-    final body = <String, dynamic>{'id_token': idToken};
+    final body = <String, dynamic>{'idToken': idToken};
     if (user != null) body['user'] = user;
     final result = await _client.post<AuthResult>(
       '/auth/apple',
@@ -88,5 +88,9 @@ class AuthRemoteDataSource {
 
   Future<void> forgotPassword(String email) async {
     await _client.post('/auth/forgot-password', {'email': email});
+  }
+
+  Future<void> deleteAccount() async {
+    await _client.delete('/me/account');
   }
 }

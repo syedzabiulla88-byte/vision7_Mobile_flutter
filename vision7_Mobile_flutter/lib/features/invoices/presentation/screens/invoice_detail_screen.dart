@@ -178,7 +178,7 @@ class InvoiceDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: Text(
                 t('invoices.lineItems', fallback: 'Line Items'),
                 style: Theme.of(context).textTheme.h4,

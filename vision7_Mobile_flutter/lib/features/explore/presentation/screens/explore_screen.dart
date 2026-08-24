@@ -181,7 +181,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   final isSelected = _selectedCategoryKey == key;
                   final label = _categoryLabel(key, t, isAcademy);
                   return Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
                     child: FilterChip(
                       label: Text(label),
                       selected: isSelected,

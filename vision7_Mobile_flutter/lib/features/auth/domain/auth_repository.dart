@@ -15,6 +15,7 @@ abstract class AuthRepository {
   Future<AuthResult> appleLogin(String idToken, {Map<String, dynamic>? user});
   Future<User?> getProfile();
   Future<void> forgotPassword(String email);
+  Future<void> deleteAccount();
   Future<void> logout();
   Future<User?> getStoredUser();
   Future<void> saveUser(User user);

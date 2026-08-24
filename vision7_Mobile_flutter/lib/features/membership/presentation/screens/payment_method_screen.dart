@@ -109,9 +109,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         content: Text(
           t(
             'payment.confirmMessage',
-            fallback:
-                'Purchase $planName for ${plan.currency} ${plan.price.toStringAsFixed(2)}?',
-          ),
+            fallback: 'Purchase {plan} for {price}?',
+          ).replaceFirst('{plan}', planName).replaceFirst(
+              '{price}', '${plan.currency} ${plan.price.toStringAsFixed(2)}'),
           style: TextStyle(color: dialogMuted),
         ),
         actions: [

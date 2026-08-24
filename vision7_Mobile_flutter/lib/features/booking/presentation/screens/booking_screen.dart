@@ -346,7 +346,7 @@ class _DateSelector extends StatelessWidget {
             onTap: () => onSelect(date),
             child: Container(
               width: 64,
-              margin: const EdgeInsets.only(right: AppSpacing.sm),
+              margin: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.gold

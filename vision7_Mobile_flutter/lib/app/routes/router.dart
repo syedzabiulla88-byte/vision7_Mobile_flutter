@@ -10,6 +10,7 @@ import '../../features/membership/domain/membership_models.dart';
 import '../../features/membership/presentation/screens/membership_screen.dart';
 import '../../features/membership/presentation/screens/payment_method_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/access_pass_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -169,6 +170,10 @@ final router = GoRouter(
     GoRoute(
       path: '/notifications',
       builder: (_, __) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: '/access-pass',
+      builder: (_, __) => const AccessPassScreen(),
     ),
     GoRoute(
       path: '/terms',

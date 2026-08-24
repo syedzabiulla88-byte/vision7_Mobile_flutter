@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../domain/auth_repository.dart';
 import '../../domain/user.dart';
 import '../../../../shared/services/push_notification_service.dart';
+import '../../../../core/network/friendly_error.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _repository;
@@ -60,7 +61,7 @@ class AuthProvider extends ChangeNotifier {
       unawaited(_push?.initialize());
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = friendlyAuthErrorMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -94,7 +95,7 @@ class AuthProvider extends ChangeNotifier {
       unawaited(_push?.initialize());
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = friendlyAuthErrorMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -116,7 +117,7 @@ class AuthProvider extends ChangeNotifier {
       unawaited(_push?.initialize());
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = friendlyAuthErrorMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -138,7 +139,7 @@ class AuthProvider extends ChangeNotifier {
       unawaited(_push?.initialize());
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = friendlyAuthErrorMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -153,7 +154,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _repository.forgotPassword(email);
     } catch (e) {
-      _error = e.toString();
+      _error = friendlyAuthErrorMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -166,6 +167,24 @@ class AuthProvider extends ChangeNotifier {
     _user = null;
     _error = null;
     notifyListeners();
+  }
+
+  /// Permanently deletes the account server-side, then clears local session
+  /// state the same way logout() does.
+  Future<bool> deleteAccount() async {
+    try {
+      await _repository.deleteAccount();
+      await _push?.onLogout();
+      await _repository.logout();
+      _user = null;
+      _error = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = friendlyAuthErrorMessage(e);
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<void> refreshProfile() async {

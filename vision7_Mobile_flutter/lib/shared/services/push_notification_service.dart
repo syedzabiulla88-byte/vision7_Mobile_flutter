@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../../firebase_options.dart';
 import '../../features/notifications/domain/notification_repository.dart';
+import '../../app/routes/router.dart' as app_router;
 
 /// Push-notification permission + FCM token lifecycle. Every step is wrapped
 /// so a missing/placeholder Firebase project (see firebase_options.dart)
@@ -74,8 +75,30 @@ class PushNotificationService {
       debugPrint('FCM token: $token');
       if (token != null) await _registerToken(token);
       messaging.onTokenRefresh.listen(_registerToken);
+
+      // Tap-to-open routing — a notification's `data` payload decides where
+      // it opens. Covers both "tapped while backgrounded" and "tapped to
+      // cold-start the app" (a message received while foregrounded never
+      // reaches either of these; that's a system-notification-tray behavior
+      // this app doesn't otherwise show a UI for yet).
+      FirebaseMessaging.onMessageOpenedApp.listen(_routeFromMessage);
+      final initialMessage = await messaging.getInitialMessage();
+      if (initialMessage != null) _routeFromMessage(initialMessage);
     } catch (e) {
       debugPrint('Push notification setup failed: $e');
+    }
+  }
+
+  /// Extensible by `data['type']` — add a case per notification kind that
+  /// should deep-link somewhere specific when tapped.
+  void _routeFromMessage(RemoteMessage message) {
+    final type = message.data['type'];
+    switch (type) {
+      case 'qr_pass':
+        app_router.router.push('/access-pass');
+        break;
+      default:
+        break;
     }
   }
 

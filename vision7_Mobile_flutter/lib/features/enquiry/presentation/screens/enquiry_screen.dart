@@ -306,7 +306,7 @@ class _EnquiryScreenState extends State<EnquiryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _SectionHeading(text: 'PERSONAL INFORMATION', color: textColor),
+                      _SectionHeading(text: t('enquiry.personalInformation', fallback: 'PERSONAL INFORMATION'), color: textColor),
                       const SizedBox(height: AppSpacing.md),
 
                       _EnquiryInput(
@@ -373,7 +373,7 @@ class _EnquiryScreenState extends State<EnquiryScreen> {
                       ),
                       const SizedBox(height: AppSpacing.xl),
 
-                      _SectionHeading(text: 'PLAYER DETAILS', color: textColor),
+                      _SectionHeading(text: t('enquiry.playerDetails', fallback: 'PLAYER DETAILS'), color: textColor),
                       const SizedBox(height: AppSpacing.md),
 
                       _EnquiryDropdown(
@@ -639,6 +639,7 @@ class _EnquiryDobField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.watch<LanguageProvider>().t;
     final iconColor = isAcademy ? AppColors.gold : AppColors.muted;
     final textColor = isAcademy ? AppColors.cream : AppColors.text;
     final formatted = value == null
@@ -649,7 +650,7 @@ class _EnquiryDobField extends StatelessWidget {
       onTap: onTap,
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: 'Or Date of Birth',
+          labelText: t('enquiry.orDateOfBirth', fallback: 'Or Date of Birth'),
           prefixIcon: Icon(Icons.calendar_today_outlined, size: 20, color: iconColor),
           prefixIconColor: iconColor,
         ),

@@ -166,7 +166,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'Booking not found',
+                      t('booking.notFound', fallback: 'Booking not found'),
                       style: TextStyle(color: mutedColor),
                     ),
                   ),

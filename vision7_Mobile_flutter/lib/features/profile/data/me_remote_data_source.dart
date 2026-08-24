@@ -21,6 +21,11 @@ class MeRemoteDataSource {
     return result;
   }
 
+  Future<QrPass?> getQrPass() {
+    return _client.get<QrPass>('/me/qr-pass',
+        fromJson: (json) => QrPass.fromJson(json as Map<String, dynamic>));
+  }
+
   Future<void> updateProfilePhoto(String photoPath) async {
     final formData = FormData.fromMap({
       'photo': await MultipartFile.fromFile(photoPath),

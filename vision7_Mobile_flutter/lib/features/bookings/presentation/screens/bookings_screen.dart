@@ -79,9 +79,8 @@ class _BookingsScreenState extends State<BookingsScreen>
         content: Text(
           t(
             'booking.cancel.confirm',
-            fallback:
-                'Are you sure you want to cancel this booking for ${booking.date}?',
-          ),
+            fallback: 'Are you sure you want to cancel this booking for {date}?',
+          ).replaceFirst('{date}', booking.date),
           style: TextStyle(color: dialogMuted),
         ),
         actions: [

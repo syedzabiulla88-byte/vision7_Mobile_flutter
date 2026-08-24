@@ -20,34 +20,58 @@ class AuthSocialButtons extends StatelessWidget {
   final Color? accent;
   final Color? textPrimary;
 
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  // serverClientId must match the backend's GOOGLE_CLIENT_ID env var (the
+  // "Web application" OAuth client the backend verifies the token's `aud`
+  // claim against) — without it, iOS mints a token audienced to the app's
+  // own iOS client ID, which the backend rejects as an audience mismatch.
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email'],
+    serverClientId: '157792846935-gmg8cv8ukests7kjsmniv9j0hjmieobr.apps.googleusercontent.com',
+  );
+
+  void _showError(BuildContext context, String message) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   Future<void> _handleGoogle(BuildContext context) async {
     final auth = context.read<AuthProvider>();
     if (!context.mounted) return;
+    final t = context.read<LanguageProvider>().t;
 
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null || !context.mounted) return;
+      if (googleUser == null || !context.mounted) return; // user cancelled — not an error
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
       final String? idToken = googleAuth.idToken;
-      if (idToken == null || !context.mounted) return;
+      if (idToken == null) {
+        if (context.mounted) {
+          _showError(context, t('auth.googleFailed', fallback: 'Google sign-in failed. Please try again.'));
+        }
+        return;
+      }
+      if (!context.mounted) return;
 
       final success = await auth.googleLogin(idToken);
-      if (success && context.mounted) {
+      if (!context.mounted) return;
+      if (success) {
         context.go('/home');
+      } else {
+        _showError(context, auth.error ?? t('auth.googleFailed', fallback: 'Google sign-in failed. Please try again.'));
       }
     } on Exception catch (e) {
       debugPrint('Google sign-in error: $e');
+      _showError(context, t('auth.googleFailed', fallback: 'Google sign-in failed. Please try again.'));
     }
   }
 
   Future<void> _handleApple(BuildContext context) async {
     final auth = context.read<AuthProvider>();
     if (!context.mounted) return;
+    final t = context.read<LanguageProvider>().t;
 
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
@@ -71,11 +95,19 @@ class AuthSocialButtons extends StatelessWidget {
         credential.identityToken!,
         user: userPayload.isEmpty ? null : userPayload,
       );
-      if (success && context.mounted) {
+      if (!context.mounted) return;
+      if (success) {
         context.go('/home');
+      } else {
+        _showError(context, auth.error ?? t('auth.appleFailed', fallback: 'Apple sign-in failed. Please try again.'));
       }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return; // user cancelled — not an error
+      debugPrint('Apple sign-in error: $e');
+      _showError(context, t('auth.appleFailed', fallback: 'Apple sign-in failed. Please try again.'));
     } on Exception catch (e) {
       debugPrint('Apple sign-in error: $e');
+      _showError(context, t('auth.appleFailed', fallback: 'Apple sign-in failed. Please try again.'));
     }
   }
 

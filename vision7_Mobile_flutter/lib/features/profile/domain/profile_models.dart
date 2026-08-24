@@ -58,6 +58,32 @@ class Dashboard {
   }
 }
 
+// BioStar QR access pass — mirrors the CRM-issued credential so the member
+// can view it in-app. Null when none has been issued yet, or the current
+// one has expired (the backend already applies that check server-side).
+class QrPass {
+  final String cardId;
+  final String? planName;
+  final DateTime issuedAt;
+  final DateTime? expiresAt;
+
+  QrPass({
+    required this.cardId,
+    this.planName,
+    required this.issuedAt,
+    this.expiresAt,
+  });
+
+  factory QrPass.fromJson(Map<String, dynamic> json) {
+    return QrPass(
+      cardId: json['cardId'] as String,
+      planName: json['planName'] as String?,
+      issuedAt: DateTime.parse(json['issuedAt'] as String),
+      expiresAt: json['expiresAt'] != null ? DateTime.parse(json['expiresAt'] as String) : null,
+    );
+  }
+}
+
 // User profile
 class Profile {
   final String id;

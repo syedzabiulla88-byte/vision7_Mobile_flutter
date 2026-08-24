@@ -104,6 +104,13 @@ class _RegisterFormState extends State<_RegisterForm> {
   @override
   void initState() {
     super.initState();
+    // Clear any error left over from a previous login/register/social-auth
+    // attempt elsewhere — AuthProvider.error is shared, global state and
+    // would otherwise bleed into this screen unrelated to anything the user
+    // just did here.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<AuthProvider>().clearError();
+    });
     _nameController.addListener(_clearNameError);
     _emailController.addListener(_clearEmailError);
     _passwordController.addListener(_clearPasswordError);
