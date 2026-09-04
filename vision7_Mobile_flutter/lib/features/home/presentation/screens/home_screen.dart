@@ -66,8 +66,20 @@ class _AppDrawer extends StatelessWidget {
 
     return Drawer(
       backgroundColor: bg,
+      // Same scroll-safe wrapper as the login screen: this Column's Spacer()
+      // pushes the version label to the bottom when there's room, but a
+      // plain Column+Spacer has no fallback when the nav items don't fit a
+      // shorter screen (confirmed on an iPhone-compat window on iPad) —
+      // LayoutBuilder+ConstrainedBox+IntrinsicHeight keeps that behaviour
+      // while scrolling instead of overflowing when they don't.
       child: SafeArea(
-        child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Profile header
@@ -226,6 +238,11 @@ class _AppDrawer extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
           ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

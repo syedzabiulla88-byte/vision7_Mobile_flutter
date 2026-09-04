@@ -102,50 +102,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> googleLogin(String idToken) async {
-    _error = null;
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final result = await _repository.googleLogin(idToken);
-      await _repository.saveToken(result.accessToken);
-      await _repository.saveUser(result.user);
-      _user = result.user;
-      _isLoading = false;
-      notifyListeners();
-      unawaited(_push?.initialize());
-      return true;
-    } catch (e) {
-      _error = friendlyAuthErrorMessage(e);
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> appleLogin(String idToken, {Map<String, dynamic>? user}) async {
-    _error = null;
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final result = await _repository.appleLogin(idToken, user: user);
-      await _repository.saveToken(result.accessToken);
-      await _repository.saveUser(result.user);
-      _user = result.user;
-      _isLoading = false;
-      notifyListeners();
-      unawaited(_push?.initialize());
-      return true;
-    } catch (e) {
-      _error = friendlyAuthErrorMessage(e);
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
   Future<void> forgotPassword(String email) async {
     _error = null;
     _isLoading = true;

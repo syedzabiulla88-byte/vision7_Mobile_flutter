@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,6 @@ import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/language_provider.dart';
 import '../../../../shared/providers/mode_provider.dart';
 import '../../../../core/network/friendly_error.dart';
-import '../widgets/auth_social_buttons.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -39,10 +39,23 @@ class LoginScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: bgColor,
+          // LayoutBuilder + ConstrainedBox(minHeight) + IntrinsicHeight lets
+          // the Spacer() below keep centering the form on a tall screen,
+          // while still scrolling instead of overflowing on a short one
+          // (a compact device, or a compatibility-mode window like an
+          // iPhone-only app running on iPad) — a plain Column with a Spacer
+          // has no fallback when its fixed-height children don't fit.
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - AppSpacing.lg * 2,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
                 children: [
                   // Language toggle
                   Container(
@@ -143,14 +156,6 @@ class LoginScreen extends StatelessWidget {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  // Social login
-                  AuthSocialButtons(
-                    accent: accent,
-                    textPrimary: textPrimary,
-                  ),
-
-                  const SizedBox(height: AppSpacing.md),
-
                   // Register link
                   Center(
                     child: TextButton(
@@ -172,8 +177,62 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // Legal disclaimer — matches the mandatory consent already
+                  // required at registration; shown here too since existing
+                  // members log in without ever passing through that screen.
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          langProvider.t(
+                            'auth.legalDisclaimerPrefix',
+                            fallback: 'By using this app you agree to the:',
+                          ),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: textMuted, fontSize: 13),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: langProvider.t('profile.privacyPolicy', fallback: 'Privacy Statement'),
+                                style: TextStyle(
+                                  color: accent,
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: accent,
+                                ),
+                                recognizer: TapGestureRecognizer()..onTap = () => context.push('/privacy'),
+                              ),
+                              TextSpan(text: '  –  ', style: TextStyle(color: textMuted)),
+                              TextSpan(
+                                text: langProvider.t('profile.termsOfService', fallback: 'Terms & Conditions'),
+                                style: TextStyle(
+                                  color: accent,
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: accent,
+                                ),
+                                recognizer: TapGestureRecognizer()..onTap = () => context.push('/terms'),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         );

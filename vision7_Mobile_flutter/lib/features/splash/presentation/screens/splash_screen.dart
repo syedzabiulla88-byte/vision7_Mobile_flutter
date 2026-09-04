@@ -18,19 +18,55 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _showLeisure = false;
+  bool _navigated = false;
+  Timer? _fallbackTimer;
+  late final AuthProvider _auth;
 
   @override
   void initState() {
     super.initState();
+    _auth = context.read<AuthProvider>();
     Timer(const Duration(milliseconds: 1300), () {
       if (mounted) setState(() => _showLeisure = true);
     });
-    Timer(const Duration(milliseconds: 2700), () {
-      if (mounted) {
-        final isAuthenticated = context.read<AuthProvider>().isAuthenticated;
-        context.go(isAuthenticated ? '/home' : '/login');
-      }
-    });
+    Timer(const Duration(milliseconds: 2700), _tryNavigate);
+    // Safety net: never strand the user on the splash screen if auth
+    // resolution somehow never finishes (e.g. a hung request).
+    _fallbackTimer = Timer(const Duration(seconds: 8), _tryNavigate);
+  }
+
+  // AuthProvider's startup check (restoring a stored session, then a live
+  // GET /auth/profile) is async and can easily outlast the fixed splash
+  // animation on a slow connection or cold start. Reading isAuthenticated
+  // before that resolves risked briefly routing an already-logged-in user
+  // to /login. Wait for isLoading to clear instead of guessing.
+  void _tryNavigate() {
+    if (!mounted || _navigated) return;
+    if (_auth.isLoading) {
+      _auth.addListener(_onAuthChanged);
+      return;
+    }
+    _navigate(_auth.isAuthenticated);
+  }
+
+  void _onAuthChanged() {
+    if (_navigated || _auth.isLoading) return;
+    _navigate(_auth.isAuthenticated);
+  }
+
+  void _navigate(bool isAuthenticated) {
+    if (_navigated || !mounted) return;
+    _navigated = true;
+    _auth.removeListener(_onAuthChanged);
+    _fallbackTimer?.cancel();
+    context.go(isAuthenticated ? '/home' : '/login');
+  }
+
+  @override
+  void dispose() {
+    _fallbackTimer?.cancel();
+    _auth.removeListener(_onAuthChanged);
+    super.dispose();
   }
 
   @override

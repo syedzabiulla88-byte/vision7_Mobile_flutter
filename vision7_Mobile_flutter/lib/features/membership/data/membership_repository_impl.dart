@@ -16,8 +16,4 @@ class UserMembershipRepositoryImpl implements UserMembershipRepository {
 
   @override
   Future<List<UserMembership>> listMine() => _remote.listMine();
-
-  @override
-  Future<UserMembership> purchase(String planId, {String? startDate, String? notes}) =>
-      _remote.purchase(planId, startDate: startDate, notes: notes);
 }

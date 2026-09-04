@@ -6,5 +6,4 @@ abstract class MembershipPlanRepository {
 
 abstract class UserMembershipRepository {
   Future<List<UserMembership>> listMine();
-  Future<UserMembership> purchase(String planId, {String? startDate, String? notes});
 }

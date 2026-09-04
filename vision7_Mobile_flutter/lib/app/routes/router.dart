@@ -6,9 +6,7 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/explore/presentation/screens/explore_screen.dart';
 import '../../features/bookings/presentation/screens/bookings_screen.dart';
-import '../../features/membership/domain/membership_models.dart';
 import '../../features/membership/presentation/screens/membership_screen.dart';
-import '../../features/membership/presentation/screens/payment_method_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/access_pass_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -65,13 +63,18 @@ final router = GoRouter(
     final isRegisterRoute = state.uri.toString() == '/register';
     final isForgotRoute = state.uri.toString() == '/forgot-password';
     final isPublicRoute = isLoginRoute || isRegisterRoute || isForgotRoute || state.uri.toString() == '/' || state.uri.toString() == '/onboarding';
+    // Terms/Privacy are read from both sides of auth: the login/register
+    // disclaimer (signed out) and Profile (signed in). Deliberately NOT part
+    // of isPublicRoute below -- that would bounce an already-signed-in
+    // reader straight to /home the instant they tapped either link.
+    final isLegalRoute = state.uri.toString() == '/terms' || state.uri.toString() == '/privacy';
 
     if (isLoading) return null;
 
     // Let splash screen show at '/' — it handles its own navigation after 2.5s
     if (state.uri.toString() == '/') return null;
 
-    if (!isAuthenticated && !isPublicRoute) {
+    if (!isAuthenticated && !isPublicRoute && !isLegalRoute) {
       return '/login';
     }
 
@@ -123,16 +126,6 @@ final router = GoRouter(
         GoRoute(path: '/explore', builder: (_, __) => const ExploreScreen()),
         GoRoute(path: '/bookings', builder: (_, __) => const BookingsScreen()),
         GoRoute(path: '/membership', builder: (_, __) => const MembershipScreen()),
-        GoRoute(
-          path: '/payment',
-          builder: (context, state) {
-            final plan = state.extra as MembershipPlan?;
-            if (plan == null) {
-              return const SizedBox.shrink();
-            }
-            return PaymentMethodScreen(plan: plan);
-          },
-        ),
         GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
       ],
     ),
