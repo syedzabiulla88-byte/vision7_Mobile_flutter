@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/spacing.dart';
@@ -27,12 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _error;
   Profile? _profile;
   String _appVersion = '1.0.0';
-
-  // Local cache for photo so the UI updates immediately after pick/upload
-  File? _localPhotoFile;
-  bool _isUploadingPhoto = false;
-
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -64,10 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _profile = profile;
           _isLoading = false;
-          if (profile.profilePhoto != null && profile.profilePhoto!.isNotEmpty) {
-            final file = File(profile.profilePhoto!);
-            if (file.existsSync()) _localPhotoFile = file;
-          }
         });
       }
     } catch (e) {
@@ -78,117 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
     }
-  }
-
-  Future<void> _pickAndUploadPhoto() async {
-    final source = await _showPhotoSourceSheet();
-    if (source == null || !mounted) return;
-
-    try {
-      final repo = context.read<MeRepository>();
-      final picked = await _picker.pickImage(
-        source: source,
-        preferredCameraDevice: CameraDevice.front,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
-      if (picked == null || !mounted) return;
-
-      setState(() {
-        _localPhotoFile = File(picked.path);
-        _isUploadingPhoto = true;
-      });
-
-      try {
-        await repo.updateProfilePhoto(picked.path);
-        final fresh = await repo.getProfile();
-        if (mounted) setState(() => _profile = fresh);
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            SnackBar(
-              content: Text(context.read<LanguageProvider>().t(
-                'profile.photoUploadFailed',
-                fallback: 'Could not upload photo. Please try again.',
-              )),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) setState(() => _isUploadingPhoto = false);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          SnackBar(
-            content: Text(context.read<LanguageProvider>().t(
-              'profile.photoPickFailed',
-              fallback: 'Could not pick photo. Please try again.',
-            )),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<ImageSource?> _showPhotoSourceSheet() async {
-    final buildContext = context;
-    final isAcademy = buildContext.read<ModeProvider>().isAcademy;
-    final textColor = isAcademy ? AppColors.cream : AppColors.text;
-    final mutedColor = isAcademy ? AppColors.cream.withValues(alpha: 0.6) : AppColors.muted;
-    final surfaceColor = isAcademy ? AppColors.academyNavy : AppColors.white;
-    final t = buildContext.read<LanguageProvider>().t;
-
-    return showModalBottomSheet<ImageSource>(
-      context: buildContext,
-      backgroundColor: surfaceColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetCtx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  t('profile.photoSheetTitle', fallback: 'Update Profile Photo'),
-                  style: Theme.of(sheetCtx).textTheme.h4.copyWith(color: textColor),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  t('profile.photoSheetSubtitle', fallback: 'Choose a source'),
-                  style: Theme.of(sheetCtx).textTheme.bodySmall?.copyWith(color: mutedColor),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                _PhotoSourceOption(
-                  icon: Icons.photo_camera_outlined,
-                  label: t('profile.takePhoto', fallback: 'Take Photo'),
-                  subtitle: t('profile.takePhotoSub', fallback: 'Use camera'),
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                  onTap: () => Navigator.pop(sheetCtx, ImageSource.camera),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                _PhotoSourceOption(
-                  icon: Icons.photo_library_outlined,
-                  label: t('profile.chooseFromGallery', fallback: 'Choose from Photos'),
-                  subtitle: t('profile.chooseFromGallerySub', fallback: 'Pick from gallery'),
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                  onTap: () => Navigator.pop(sheetCtx, ImageSource.gallery),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> _showLogoutDialog(BuildContext context) async {
@@ -345,12 +221,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _ProfileAvatar(
                               whiteColor: whiteColor,
                               mutedColor: mutedColor,
-                              textColor: textColor,
                               displayName: displayName,
-                              localPhotoFile: _localPhotoFile,
                               remotePhotoUrl: _profile?.profilePhoto,
-                              isUploading: _isUploadingPhoto,
-                              onTap: _pickAndUploadPhoto,
                             ),
                             const SizedBox(height: AppSpacing.md),
                             Text(displayName, style: Theme.of(context).textTheme.h4.copyWith(color: textColor)),
@@ -610,22 +482,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 class _ProfileAvatar extends StatelessWidget {
   final Color whiteColor;
   final Color mutedColor;
-  final Color textColor;
   final String displayName;
-  final File? localPhotoFile;
   final String? remotePhotoUrl;
-  final bool isUploading;
-  final VoidCallback onTap;
 
   const _ProfileAvatar({
     required this.whiteColor,
     required this.mutedColor,
-    required this.textColor,
     required this.displayName,
-    required this.localPhotoFile,
     required this.remotePhotoUrl,
-    required this.isUploading,
-    required this.onTap,
   });
 
   @override
@@ -638,77 +502,27 @@ class _ProfileAvatar extends StatelessWidget {
         .map((s) => s[0].toUpperCase())
         .join();
 
-    final hasLocal = localPhotoFile != null;
     final hasRemote = remotePhotoUrl != null && remotePhotoUrl!.isNotEmpty;
 
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              color: whiteColor,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.gold, width: 2),
-            ),
-            child: ClipOval(
-              child: hasLocal
-                  ? Image.file(localPhotoFile!, fit: BoxFit.cover, width: 96, height: 96)
-                  : hasRemote
-                      ? Image.network(
-                          remotePhotoUrl!,
-                          fit: BoxFit.cover,
-                          width: 96,
-                          height: 96,
-                          errorBuilder: (_, __, ___) => _initialsFallback(initials, mutedColor),
-                        )
-                      : _initialsFallback(initials, mutedColor),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0,
-          bottom: 0,
-          child: GestureDetector(
-            onTap: onTap,
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.gold,
-                shape: BoxShape.circle,
-                border: Border.all(color: textColor, width: 2),
-              ),
-              child: Icon(
-                Icons.camera_alt,
-                size: 16,
-                color: textColor == AppColors.cream ? AppColors.navy : AppColors.cream,
-              ),
-            ),
-          ),
-        ),
-        if (isUploading)
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black.withValues(alpha: 0.4),
-              ),
-              child: const Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.gold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
+    return Container(
+      width: 96,
+      height: 96,
+      decoration: BoxDecoration(
+        color: whiteColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.gold, width: 2),
+      ),
+      child: ClipOval(
+        child: hasRemote
+            ? Image.network(
+                remotePhotoUrl!,
+                fit: BoxFit.cover,
+                width: 96,
+                height: 96,
+                errorBuilder: (_, __, ___) => _initialsFallback(initials, mutedColor),
+              )
+            : _initialsFallback(initials, mutedColor),
+      ),
     );
   }
 
@@ -720,62 +534,6 @@ class _ProfileAvatar extends StatelessWidget {
           color: mutedColor,
           fontSize: 36,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _PhotoSourceOption extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final Color textColor;
-  final Color mutedColor;
-  final VoidCallback onTap;
-
-  const _PhotoSourceOption({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.textColor,
-    required this.mutedColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          border: Border.all(color: mutedColor.withValues(alpha: 0.3)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: AppColors.gold, size: 24),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(color: textColor, fontWeight: FontWeight.w600, fontSize: 15),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: mutedColor, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: mutedColor, size: 20),
-          ],
         ),
       ),
     );

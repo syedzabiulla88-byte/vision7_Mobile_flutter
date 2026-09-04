@@ -38,10 +38,20 @@ class BookingConfirmationScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isAcademy ? AppColors.academyNavy : AppColors.cream,
+      // Scroll-safe wrapper (see login_screen.dart) — this Column's Spacer()
+      // has no fallback when the confirmation card + both buttons don't fit
+      // a shorter screen.
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - AppSpacing.lg * 2,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
             children: [
               const SizedBox(height: AppSpacing.xxl),
               Container(
@@ -116,7 +126,11 @@ class BookingConfirmationScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xxl),
             ],
-          ),
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

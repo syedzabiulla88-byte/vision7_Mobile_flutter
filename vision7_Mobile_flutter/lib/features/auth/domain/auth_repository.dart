@@ -11,8 +11,6 @@ abstract class AuthRepository {
     String? phone,
     String? gender,
   });
-  Future<AuthResult> googleLogin(String idToken);
-  Future<AuthResult> appleLogin(String idToken, {Map<String, dynamic>? user});
   Future<User?> getProfile();
   Future<void> forgotPassword(String email);
   Future<void> deleteAccount();

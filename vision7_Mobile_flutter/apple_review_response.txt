@@ -1,0 +1,26 @@
+Guideline 2.1 - Information Needed — Response
+
+2. Device models and OS tested on:
+iPhone 14, iOS 26.6.1.
+
+3. App description, target audience, and value provided:
+Vision7 is the official companion app for Vision7 Leisure Club and Vision7 Academy in Riyadh, Saudi Arabia — a combined leisure/wellness facility (gym, padel, swimming) and a youth football academy. The app solves the problem of members needing to browse facilities, book tours, manage their club/academy membership, view invoices, and receive real-time updates, all without calling or visiting in person. Target audience: adults 18+ managing their own leisure membership, and parents/guardians managing academy enrollment for their children (ages roughly 6–17). The app is bilingual (English/Arabic) and switches between a "Leisure" and "Academy" visual mode depending on which side of the business the user is engaging with.
+
+4. Setup / access instructions:
+No special credentials are required. Registration is fully self-service: Sign Up → enter name, email, password → account is created immediately (no email verification gate, no ID/KYC step blocks login). The reviewer can create a fresh test account directly in the app with email + password.
+
+For convenience, a ready-made test account is also available (please re-verify this is still active before submitting, since some time has passed since it was created):
+Email: apple.reviewer@vision7.sa
+Password: AppleReview2026!
+
+5. External services, tools, or platforms used:
+- Firebase Cloud Messaging (Google) — push notifications.
+- Firebase Crashlytics — crash reporting only (no Firebase Analytics).
+- Vision7's own backend API (api.vision7.sa) — a custom NestJS service that handles all business data (bookings, memberships, invoices, notifications).
+- No payment SDK, and no purchase or subscription flow, is present in the app at all. Membership plans are browsed in-app, and interest is expressed via an "Enquire Now" lead form (name/contact details submitted to Vision7 staff) — no card is ever entered and no charge ever occurs in-app. Membership sign-up and billing is completed afterward by Vision7 staff directly with the member, the same way a gym or sports club membership is normally sold in person.
+
+6. Regional differences:
+The app functions identically across all regions/countries it's distributed to. The only difference is language: full English and Arabic localization, switchable in-app (Profile → Language), including RTL layout support for Arabic. There is no content or feature gating by region.
+
+7. Regulated industry / protected material:
+Vision7 operates a sports and leisure facility (gym, padel courts, swimming pool, youth football academy) — this is not a regulated industry in the sense of healthcare, finance, or legal services, and the app does not include any protected third-party material. No special licensing documentation applies.

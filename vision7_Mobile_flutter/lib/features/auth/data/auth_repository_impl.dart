@@ -41,13 +41,6 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
   @override
-  Future<AuthResult> googleLogin(String idToken) => _remote.googleLogin(idToken);
-
-  @override
-  Future<AuthResult> appleLogin(String idToken, {Map<String, dynamic>? user}) =>
-      _remote.appleLogin(idToken, user: user);
-
-  @override
   Future<void> forgotPassword(String email) => _remote.forgotPassword(email);
 
   @override

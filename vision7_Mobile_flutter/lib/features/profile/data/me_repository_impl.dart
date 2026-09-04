@@ -14,8 +14,4 @@ class MeRepositoryImpl implements MeRepository {
 
   @override
   Future<QrPass?> getQrPass() => _remote.getQrPass();
-
-  @override
-  Future<void> updateProfilePhoto(String photoPath) =>
-      _remote.updateProfilePhoto(photoPath);
 }

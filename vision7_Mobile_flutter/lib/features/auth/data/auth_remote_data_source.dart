@@ -50,34 +50,6 @@ class AuthRemoteDataSource {
     return result;
   }
 
-  Future<AuthResult> googleLogin(String idToken) async {
-    final result = await _client.post<AuthResult>(
-      '/auth/google',
-      {'idToken': idToken},
-      fromJson: (json) => AuthResult(
-        accessToken: json['accessToken'] as String,
-        user: User.fromJson(json['user'] as Map<String, dynamic>),
-      ),
-    );
-    if (result == null) throw Exception('Google login failed');
-    return result;
-  }
-
-  Future<AuthResult> appleLogin(String idToken, {Map<String, dynamic>? user}) async {
-    final body = <String, dynamic>{'idToken': idToken};
-    if (user != null) body['user'] = user;
-    final result = await _client.post<AuthResult>(
-      '/auth/apple',
-      body,
-      fromJson: (json) => AuthResult(
-        accessToken: json['accessToken'] as String,
-        user: User.fromJson(json['user'] as Map<String, dynamic>),
-      ),
-    );
-    if (result == null) throw Exception('Apple login failed');
-    return result;
-  }
-
   Future<User?> getProfile() async {
     final result = await _client.get<User>(
       '/auth/profile',

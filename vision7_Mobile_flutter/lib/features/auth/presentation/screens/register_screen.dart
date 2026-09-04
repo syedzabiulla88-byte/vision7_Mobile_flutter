@@ -7,7 +7,6 @@ import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/app_mode.dart';
 import '../../../../shared/providers/mode_provider.dart';
 import '../../../../core/constants/spacing.dart';
-import '../widgets/auth_social_buttons.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../legal/presentation/screens/legal_screen.dart';
 
@@ -458,11 +457,6 @@ class _RegisterFormState extends State<_RegisterForm> {
                   ),
           ),
         ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        // Social sign-in
-        AuthSocialButtons(accent: widget.accent, textPrimary: widget.textOnSurface),
 
         const SizedBox(height: AppSpacing.md),
         Center(

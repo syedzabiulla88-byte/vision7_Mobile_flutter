@@ -25,19 +25,4 @@ class UserMembershipRemoteDataSource {
         .map((m) => UserMembership.fromJson(m as Map<String, dynamic>))
         .toList();
   }
-
-  Future<UserMembership> purchase(String planId, {String? startDate, String? notes}) async {
-    final body = <String, dynamic>{'planId': planId};
-    if (startDate != null) body['startDate'] = startDate;
-    if (notes != null) body['notes'] = notes;
-
-    final result = await _client.post<UserMembership>(
-      '/memberships/purchase',
-      body,
-      fromJson: (json) =>
-          UserMembership.fromJson(json as Map<String, dynamic>),
-    );
-    if (result == null) throw Exception('Purchase failed');
-    return result;
-  }
 }
